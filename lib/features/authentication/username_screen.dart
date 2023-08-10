@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/authentication/email_screen.dart';
+import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
 
 class UsernameScreen extends StatefulWidget {
   const UsernameScreen({super.key});
@@ -15,13 +17,33 @@ class _UsernameScreenState extends State<UsernameScreen> {
 
   @override
   void initState() {
+    // 1. super.initState()로 시작해서
     super.initState();
 
+    // 2. 필요한 일들을 하고
     _usernameController.addListener(() {
       setState(() {
         _username = _usernameController.text;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    // 3. 더이상 이 위젯이 필요 없을 때 메모리를 정리하고
+    _usernameController.dispose();
+
+    // 4. super.dispose()로 끝냄
+    super.dispose();
+  }
+
+  void _onNextTap() {
+    if (_username.isEmpty) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const EmailScreen(),
+      ),
+    );
   }
 
   @override
@@ -75,32 +97,9 @@ class _UsernameScreenState extends State<UsernameScreen> {
               cursorColor: Theme.of(context).primaryColor,
             ),
             Gaps.v16,
-            FractionallySizedBox(
-              widthFactor: 1,
-              child: AnimatedContainer(
-                duration: const Duration(
-                  milliseconds: 200,
-                ),
-                padding: const EdgeInsets.symmetric(
-                  vertical: Sizes.size12,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(Sizes.size5),
-                  color: _username.isEmpty
-                      ? Colors.grey.shade300
-                      : Theme.of(context).primaryColor,
-                ),
-                child: Text(
-                  'Next',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color:
-                        _username.isEmpty ? Colors.grey.shade600 : Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
+            GestureDetector(
+                onTap: _onNextTap,
+                child: FormButton(disabled: _username.isEmpty)),
           ],
         ),
       ),
