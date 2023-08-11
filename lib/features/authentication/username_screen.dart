@@ -17,10 +17,7 @@ class _UsernameScreenState extends State<UsernameScreen> {
 
   @override
   void initState() {
-    // 1. super.initState()로 시작해서
     super.initState();
-
-    // 2. 필요한 일들을 하고
     _usernameController.addListener(() {
       setState(() {
         _username = _usernameController.text;
@@ -30,10 +27,7 @@ class _UsernameScreenState extends State<UsernameScreen> {
 
   @override
   void dispose() {
-    // 3. 더이상 이 위젯이 필요 없을 때 메모리를 정리하고
     _usernameController.dispose();
-
-    // 4. super.dispose()로 끝냄
     super.dispose();
   }
 
