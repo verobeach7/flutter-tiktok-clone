@@ -5,10 +5,10 @@ class FormButton extends StatelessWidget {
   const FormButton({
     super.key,
     required this.disabled,
-    required this.text,
+    this.text,
   });
 
-  final String text;
+  final String? text;
 
   final bool disabled;
 
@@ -35,7 +35,7 @@ class FormButton extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
           child: Text(
-            text,
+            text ?? "Next",
             textAlign: TextAlign.center,
           ),
         ),
