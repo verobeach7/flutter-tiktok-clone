@@ -16,6 +16,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
 
   Map<String, String> formData = {}; // formData를 저장하기 위한 Map
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   bool _obscureText = true;
 
   void _onSubmitTap() {
@@ -39,7 +40,11 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
     FocusScope.of(context).unfocus();
   }
 
-  void _onClearTap() {
+  void _onEmailClearTap() {
+    _emailController.clear();
+  }
+
+  void _onPasswordClearTap() {
     _passwordController.clear();
   }
 
@@ -67,9 +72,24 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
               children: [
                 Gaps.v28,
                 TextFormField(
+                  controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     hintText: 'Email',
+                    suffix: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: _onEmailClearTap,
+                          child: FaIcon(
+                            FontAwesomeIcons.solidCircleXmark,
+                            color: Colors.grey.shade500,
+                            size: Sizes.size20,
+                          ),
+                        ),
+                        Gaps.h4,
+                      ],
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -100,15 +120,6 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           GestureDetector(
-                            onTap: _onClearTap,
-                            child: FaIcon(
-                              FontAwesomeIcons.solidCircleXmark,
-                              color: Colors.grey.shade500,
-                              size: Sizes.size20,
-                            ),
-                          ),
-                          Gaps.h16,
-                          GestureDetector(
                             onTap: _toggleObscureText,
                             child: FaIcon(
                               _obscureText
@@ -118,6 +129,16 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                               size: Sizes.size20,
                             ),
                           ),
+                          Gaps.h16,
+                          GestureDetector(
+                            onTap: _onPasswordClearTap,
+                            child: FaIcon(
+                              FontAwesomeIcons.solidCircleXmark,
+                              color: Colors.grey.shade500,
+                              size: Sizes.size20,
+                            ),
+                          ),
+                          Gaps.h4,
                         ],
                       )),
                   validator: (value) {
