@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/onboarding/tutorial_screen.dart';
 import 'package:tiktok_clone/features/onboarding/widgets/interest_button.dart';
 
 const interests = [
@@ -69,6 +70,16 @@ class _InterestsScreenState extends State<InterestsScreen> {
         _showTitle = false;
       });
     }
+  }
+
+  void _onNextTap() {
+    // Stateful Widget이므로 따로 context를 받지 않아도 자동으로 전달됨
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const TutorialScreen(),
+      ),
+    );
   }
 
   @override
@@ -146,10 +157,30 @@ class _InterestsScreenState extends State<InterestsScreen> {
             right: Sizes.size24,
           ),
           child: CupertinoButton(
-            onPressed: () {},
+            onPressed: _onNextTap,
             color: Theme.of(context).primaryColor,
             child: const Text("Next"),
           ),
+          // child: GestureDetector(
+          //   onTap: _onNextTap,
+          //   child: Container(
+          //     padding: const EdgeInsets.symmetric(
+          //       vertical: Sizes.size16 + Sizes.size2,
+          //     ),
+          //     decoration: BoxDecoration(
+          //       color: Theme.of(context).primaryColor,
+          //     ),
+          //     child: const Text(
+          //       'Next',
+          //       textAlign: TextAlign.center,
+          //       style: TextStyle(
+          //         color: Colors.white,
+          //         fontWeight: FontWeight.w500,
+          //         fontSize: Sizes.size16,
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ),
       ),
     );
