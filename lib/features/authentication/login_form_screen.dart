@@ -32,10 +32,14 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!
             .save(); // save를 호출하면 모든 텍스트 입력에 onSaved 콜백 함수를 실행함.
-        Navigator.of(context).push(
+        Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) => const InterestsScreen(),
           ),
+          // (route) {
+          //   return false;
+          // },
+          (route) => false,
         );
       }
     }
