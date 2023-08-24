@@ -3,7 +3,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 
 class PostVideoButton extends StatelessWidget {
-  const PostVideoButton({super.key});
+  const PostVideoButton({
+    super.key,
+    required this.isTabDown,
+  });
+
+  final bool isTabDown;
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +19,10 @@ class PostVideoButton extends StatelessWidget {
       children: [
         Positioned(
           right: 20,
-          child: Container(
-            height: 30,
-            width: 25,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 50),
+            height: isTabDown ? 35 : 30,
+            width: isTabDown ? 30 : 25,
             padding: const EdgeInsets.symmetric(
               horizontal: Sizes.size8,
             ),
@@ -30,9 +36,10 @@ class PostVideoButton extends StatelessWidget {
         ),
         Positioned(
           left: 20,
-          child: Container(
-            height: 30,
-            width: 25,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 50),
+            height: isTabDown ? 35 : 30,
+            width: isTabDown ? 30 : 25,
             padding: const EdgeInsets.symmetric(
               horizontal: Sizes.size8,
             ),
@@ -44,8 +51,10 @@ class PostVideoButton extends StatelessWidget {
             ),
           ),
         ),
-        Container(
-          height: 30,
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 50),
+          height: isTabDown ? 35 : 30,
+          width: isTabDown ? 45 : 40,
           padding: const EdgeInsets.symmetric(
             horizontal: Sizes.size12,
           ),

@@ -16,6 +16,8 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
 
+  bool _isTabDown = false;
+
   void _onTap(int index) {
     setState(() {
       _selectedIndex = index;
@@ -33,6 +35,27 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         fullscreenDialog: true,
       ),
     );
+  }
+
+  void _onPostVideoButtonTapDown() {
+    setState(() {
+      _isTabDown = true;
+    });
+    print("Down: true");
+  }
+
+  void _onPostVideoButtonTapCancel() {
+    setState(() {
+      _isTabDown = false;
+    });
+    print("Cancel: false");
+  }
+
+  void _onPostVideoButtonTapUp() {
+    setState(() {
+      _isTabDown = false;
+    });
+    print("Up: false");
   }
 
   @override
@@ -64,7 +87,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           padding: const EdgeInsets.all(Sizes.size12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               NavTab(
                 text: "Home",
@@ -83,7 +106,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               Gaps.h24,
               GestureDetector(
                 onTap: _onPostVideoButtonTap,
-                child: const PostVideoButton(),
+                onTapDown: (TapDownDetails details) {
+                  _onPostVideoButtonTapDown();
+                },
+                onTapUp: (TapUpDetails details) {
+                  _onPostVideoButtonTapUp();
+                },
+                onTapCancel: _onPostVideoButtonTapCancel,
+                child: PostVideoButton(
+                  isTabDown: _isTabDown,
+                ),
               ),
               Gaps.h24,
               NavTab(
