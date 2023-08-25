@@ -8,7 +8,7 @@ class NavTab extends StatelessWidget {
     required this.text,
     required this.isSelected,
     required this.icon,
-    required this.onTab,
+    required this.onTap,
     required this.selectedIcon,
   });
 
@@ -16,14 +16,14 @@ class NavTab extends StatelessWidget {
   final bool isSelected;
   final IconData icon;
   final IconData selectedIcon;
-  final Function onTab;
+  final Function onTap;
 
   @override
   Widget build(BuildContext context) {
     // Expanded: 터치 공간을 최대한 늘려주기 위해서 최대한 확장함
     return Expanded(
       child: GestureDetector(
-        onTap: () => onTab(),
+        onTap: () => onTap(),
         // Container에 넣어줘야 확장이 가능, 색상을 부여하기 때문에 공간 확장이 가능
         child: Container(
           color: Colors.black,

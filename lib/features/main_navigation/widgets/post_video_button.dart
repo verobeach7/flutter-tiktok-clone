@@ -21,8 +21,8 @@ class PostVideoButton extends StatelessWidget {
           right: 20,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 50),
-            height: isTabDown ? 35 : 30,
-            width: isTabDown ? 30 : 25,
+            height: isTabDown ? 32 : 30,
+            width: isTabDown ? 28 : 25,
             padding: const EdgeInsets.symmetric(
               horizontal: Sizes.size8,
             ),
@@ -38,8 +38,8 @@ class PostVideoButton extends StatelessWidget {
           left: 20,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 50),
-            height: isTabDown ? 35 : 30,
-            width: isTabDown ? 30 : 25,
+            height: isTabDown ? 32 : 30,
+            width: isTabDown ? 28 : 25,
             padding: const EdgeInsets.symmetric(
               horizontal: Sizes.size8,
             ),
@@ -53,7 +53,7 @@ class PostVideoButton extends StatelessWidget {
         ),
         AnimatedContainer(
           duration: const Duration(milliseconds: 50),
-          height: isTabDown ? 35 : 30,
+          height: isTabDown ? 32 : 30,
           width: isTabDown ? 45 : 40,
           padding: const EdgeInsets.symmetric(
             horizontal: Sizes.size12,
