@@ -8,12 +8,29 @@ class VideoTimelineScreen extends StatefulWidget {
 }
 
 class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
+  int _itemCount = 4;
+
   List<Color> colors = [
     Colors.blue,
     Colors.red,
     Colors.yellow,
     Colors.teal,
   ];
+
+  void _onPageChanged(int page) {
+    // print(page);
+    if (page == _itemCount - 1) {
+      _itemCount = _itemCount + 4;
+      colors.addAll([
+        Colors.blue,
+        Colors.red,
+        Colors.yellow,
+        Colors.teal,
+      ]);
+    }
+    // setState를 반드시 해줘야함
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +39,18 @@ class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
       // // page를 자석처럼 붙게 만들수도 있고, 원하는 만큼만 보여지게 한 후 멈추게 할 수도 있음.
       // pageSnapping: false,
       scrollDirection: Axis.vertical,
+      onPageChanged: _onPageChanged,
+      itemCount: _itemCount, // 갱신된 _itemCount를 계속 가질 수 있도록 연결해줌
       itemBuilder: (context, index) => Container(
         color: colors[index],
+        child: Center(
+          child: Text(
+            "Screen $index",
+            style: const TextStyle(
+              fontSize: 68,
+            ),
+          ),
+        ),
       ),
     );
   }
