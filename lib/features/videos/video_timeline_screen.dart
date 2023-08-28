@@ -54,7 +54,7 @@ class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
       onPageChanged: _onPageChanged,
       itemCount: _itemCount, // 갱신된 _itemCount를 계속 가질 수 있도록 연결해줌
       itemBuilder: (context, index) =>
-          VideoPost(onVideoFinished: _onVideoFinished),
+          VideoPost(onVideoFinished: _onVideoFinished, index: index),
     );
   }
 }
