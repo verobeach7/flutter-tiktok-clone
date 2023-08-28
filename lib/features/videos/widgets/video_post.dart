@@ -19,9 +19,15 @@ class VideoPost extends StatefulWidget {
   State<VideoPost> createState() => _VideoPostState();
 }
 
-class _VideoPostState extends State<VideoPost> {
+class _VideoPostState extends State<VideoPost>
+    with SingleTickerProviderStateMixin {
   final VideoPlayerController _videoPlayerController =
       VideoPlayerController.asset("assets/videos/IMG_2181.MOV");
+  final Duration _animationDuration = const Duration(milliseconds: 200);
+
+  late final AnimationController _animationController;
+
+  bool _isPaused = false;
 
   // _videoPlayerController.addListener가 사용할 메소드를 따로 생성
   void _onVideoChange() {
@@ -46,6 +52,22 @@ class _VideoPostState extends State<VideoPost> {
   void initState() {
     super.initState();
     _initVideoPlayer();
+
+    _animationController = AnimationController(
+      vsync: this,
+      // lowerBound와 upperBound는 scale을 결정함
+      lowerBound: 1.0,
+      upperBound: 1.5,
+      value: 1.5,
+      duration: _animationDuration,
+    );
+    // build를 다시 하지 않아 애니메이션이 나타나지 않음 1.5->1.0->1.5만 왔다갔다 함
+    // addListener를 통해 1.5->1.4->1.3->... 계속 다시 빌드하여 애니메이션을 보여줘야 함
+    _animationController.addListener(() {
+      // print(_animationController.value);
+      // setState를 통해서 build 메서드에게 값이 변하고 있으니 다시 빌드하라고 알려줘야 함
+      setState(() {});
+    });
   }
 
   // dispose 시켜주지 않으면 리소스 낭비로 메모리가 부족해 뻗음
@@ -64,9 +86,14 @@ class _VideoPostState extends State<VideoPost> {
   void _onTogglePause() {
     if (_videoPlayerController.value.isPlaying) {
       _videoPlayerController.pause();
+      _animationController.reverse(); // upperBound에서 lowerBound로 애니메이션 함
     } else {
       _videoPlayerController.play();
+      _animationController.forward(); // lowerBound에서 upperBound로 애니메이션 함
     }
+    setState(() {
+      _isPaused = !_isPaused;
+    });
   }
 
   @override
@@ -89,13 +116,20 @@ class _VideoPostState extends State<VideoPost> {
               onTap: _onTogglePause,
             ),
           ),
-          const Positioned.fill(
+          Positioned.fill(
             child: IgnorePointer(
               child: Center(
-                child: FaIcon(
-                  FontAwesomeIcons.play,
-                  color: Colors.white,
-                  size: Sizes.size52,
+                child: Transform.scale(
+                  scale: _animationController.value,
+                  child: AnimatedOpacity(
+                    opacity: _isPaused ? 1 : 0,
+                    duration: _animationDuration,
+                    child: const FaIcon(
+                      FontAwesomeIcons.play,
+                      color: Colors.white,
+                      size: Sizes.size52,
+                    ),
+                  ),
                 ),
               ),
             ),
