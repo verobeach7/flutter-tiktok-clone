@@ -61,13 +61,6 @@ class _VideoPostState extends State<VideoPost>
       value: 1.5,
       duration: _animationDuration,
     );
-    // build를 다시 하지 않아 애니메이션이 나타나지 않음 1.5->1.0->1.5만 왔다갔다 함
-    // addListener를 통해 1.5->1.4->1.3->... 계속 다시 빌드하여 애니메이션을 보여줘야 함
-    _animationController.addListener(() {
-      // print(_animationController.value);
-      // setState를 통해서 build 메서드에게 값이 변하고 있으니 다시 빌드하라고 알려줘야 함
-      setState(() {});
-    });
   }
 
   // dispose 시켜주지 않으면 리소스 낭비로 메모리가 부족해 뻗음
@@ -119,8 +112,16 @@ class _VideoPostState extends State<VideoPost>
           Positioned.fill(
             child: IgnorePointer(
               child: Center(
-                child: Transform.scale(
-                  scale: _animationController.value,
+                child: AnimatedBuilder(
+                  animation: _animationController, // 컨트롤러의 값을 추적
+                  builder: (context, child) {
+                    // builder는 값이 변할 때마다 함수를 실행
+                    return Transform.scale(
+                      scale: _animationController.value,
+                      child:
+                          child, // AnimatedBuilder의 child인 AnimatedOpacity를 넘겨받음
+                    );
+                  },
                   child: AnimatedOpacity(
                     opacity: _isPaused ? 1 : 0,
                     duration: _animationDuration,
