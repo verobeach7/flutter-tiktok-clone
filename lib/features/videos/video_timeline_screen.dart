@@ -47,18 +47,32 @@ class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
     super.dispose();
   }
 
+  Future<void> _onRefresh() {
+    // Future.delayed를 이용해 Future가 있는 것처럼 fake할 수 있음
+    // 실제로는 API를 이용해 데이터를 받아오고 처리하면 됨
+    return Future.delayed(
+      const Duration(seconds: 5),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // main_navigation_screen의 Scaffold 안의 Stack에 있으므로 별도의 Scaffold나 Stack이 필요 없음.
-    return PageView.builder(
-      // // page를 자석처럼 붙게 만들수도 있고, 원하는 만큼만 보여지게 한 후 멈추게 할 수도 있음.
-      // pageSnapping: false,
-      controller: _pageController,
-      scrollDirection: Axis.vertical,
-      onPageChanged: _onPageChanged,
-      itemCount: _itemCount, // 갱신된 _itemCount를 계속 가질 수 있도록 연결해줌
-      itemBuilder: (context, index) =>
-          VideoPost(onVideoFinished: _onVideoFinished, index: index),
+    return RefreshIndicator(
+      onRefresh: _onRefresh, // 반드시 Future<void>를 리턴 받아야 함.
+      displacement: 50,
+      edgeOffset: 20,
+      color: Theme.of(context).primaryColor,
+      child: PageView.builder(
+        // // page를 자석처럼 붙게 만들수도 있고, 원하는 만큼만 보여지게 한 후 멈추게 할 수도 있음.
+        // pageSnapping: false,
+        controller: _pageController,
+        scrollDirection: Axis.vertical,
+        onPageChanged: _onPageChanged,
+        itemCount: _itemCount, // 갱신된 _itemCount를 계속 가질 수 있도록 연결해줌
+        itemBuilder: (context, index) =>
+            VideoPost(onVideoFinished: _onVideoFinished, index: index),
+      ),
     );
   }
 }
