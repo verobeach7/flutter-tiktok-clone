@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/videos/widgets/video_button.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -29,6 +31,8 @@ class _VideoPostState extends State<VideoPost>
 
   bool _isPaused = false;
 
+  bool _isEllipsis = true;
+
   // _videoPlayerController.addListener가 사용할 메소드를 따로 생성
   void _onVideoChange() {
     if (_videoPlayerController.value.isInitialized) {
@@ -42,10 +46,11 @@ class _VideoPostState extends State<VideoPost>
   // 시간이 소요되므로 비동기 작업 필요 async-await
   void _initVideoPlayer() async {
     await _videoPlayerController.initialize();
-    setState(() {});
+    await _videoPlayerController.setLooping(true);
     // video가 끝나는 시점을 알려주기 위해서 다음 과정 필요
     // addListener가 영상이 바뀌는 시간, 길이, 끝나는 시간 등을 모두 알려줄 수 있음
-    _videoPlayerController.addListener(_onVideoChange);
+    // _videoPlayerController.addListener(_onVideoChange);
+    setState(() {});
   }
 
   @override
@@ -86,6 +91,12 @@ class _VideoPostState extends State<VideoPost>
     }
     setState(() {
       _isPaused = !_isPaused;
+    });
+  }
+
+  void _onToggleEllipsis() {
+    setState(() {
+      _isEllipsis = !_isEllipsis;
     });
   }
 
@@ -135,6 +146,91 @@ class _VideoPostState extends State<VideoPost>
               ),
             ),
           ),
+          Positioned(
+            bottom: 20,
+            left: 10,
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width - 100,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "@verobeach7",
+                    style: TextStyle(
+                      fontSize: Sizes.size20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Gaps.v10,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "This is the SEOUL trip!!!!!!!!!!! I wanna go there again. This is the SEOUL trip!!!!!!!!!!! I wanna go there again.",
+                          style: const TextStyle(
+                            fontSize: Sizes.size16,
+                            color: Colors.white,
+                          ),
+                          softWrap: true,
+                          overflow: _isEllipsis
+                              ? TextOverflow.ellipsis
+                              : TextOverflow.visible,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: _onToggleEllipsis,
+                        child: Text(
+                          _isEllipsis ? "See more" : "Close",
+                          style: const TextStyle(
+                            fontSize: Sizes.size16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const Positioned(
+            bottom: 20,
+            right: 10,
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 25,
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  foregroundImage: NetworkImage(
+                      "https://avatars.githubusercontent.com/u/60215757?v=4"),
+                  child: Text(
+                    "verobeach7",
+                    style: TextStyle(
+                      fontSize: Sizes.size8,
+                    ),
+                  ),
+                ),
+                Gaps.v24,
+                VideoButton(
+                  icon: FontAwesomeIcons.solidHeart,
+                  text: "2.9M",
+                ),
+                Gaps.v24,
+                VideoButton(
+                  icon: FontAwesomeIcons.solidComment,
+                  text: "33.0K",
+                ),
+                Gaps.v24,
+                VideoButton(
+                  icon: FontAwesomeIcons.share,
+                  text: "Share",
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );
