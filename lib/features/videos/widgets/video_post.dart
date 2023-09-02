@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/videos/widgets/video_button.dart';
+import 'package:tiktok_clone/features/videos/widgets/video_comments.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -90,6 +91,21 @@ class _VideoPostState extends State<VideoPost>
     setState(() {
       _isEllipsis = !_isEllipsis;
     });
+  }
+
+  void _onCommentsTap(BuildContext context) async {
+    if (_videoPlayerController.value.isPlaying) {
+      _onTogglePause();
+    }
+    await showModalBottomSheet(
+      context: context,
+      builder: (context) => const VideoComments(),
+      // barrierColor: Colors.red,
+      // backgroundColor: Colors.green, // 적용이 안 된 것처럼 보이는 이유는 위에 Scaffold 위젯이 놓여졌기 때문
+      backgroundColor: Colors.transparent,
+    );
+    // print("close"); // async-await을 사용하여 댓글창이 열렸다가 닫히게 되는 시점을 알 수 있음. 닫힌 후 무엇을 할 지 코딩할 수 있음
+    _onTogglePause();
   }
 
   @override
@@ -187,12 +203,12 @@ class _VideoPostState extends State<VideoPost>
               ),
             ),
           ),
-          const Positioned(
+          Positioned(
             bottom: 20,
             right: 10,
             child: Column(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 25,
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
@@ -206,17 +222,21 @@ class _VideoPostState extends State<VideoPost>
                   ),
                 ),
                 Gaps.v24,
-                VideoButton(
+                const VideoButton(
                   icon: FontAwesomeIcons.solidHeart,
                   text: "2.9M",
                 ),
                 Gaps.v24,
-                VideoButton(
-                  icon: FontAwesomeIcons.solidComment,
-                  text: "33.0K",
+                GestureDetector(
+                  onTap: () =>
+                      _onCommentsTap(context), // 함수가 매개변수를 받아야 할 때 이렇게 처리
+                  child: const VideoButton(
+                    icon: FontAwesomeIcons.solidComment,
+                    text: "33.0K",
+                  ),
                 ),
                 Gaps.v24,
-                VideoButton(
+                const VideoButton(
                   icon: FontAwesomeIcons.share,
                   text: "Share",
                 ),
