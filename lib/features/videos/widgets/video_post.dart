@@ -33,16 +33,6 @@ class _VideoPostState extends State<VideoPost>
 
   bool _isEllipsis = true;
 
-  // _videoPlayerController.addListener가 사용할 메소드를 따로 생성
-  void _onVideoChange() {
-    if (_videoPlayerController.value.isInitialized) {
-      if (_videoPlayerController.value.duration ==
-          _videoPlayerController.value.position) {
-        widget.onVideoFinished();
-      }
-    }
-  }
-
   // 시간이 소요되므로 비동기 작업 필요 async-await
   void _initVideoPlayer() async {
     await _videoPlayerController.initialize();
@@ -76,7 +66,9 @@ class _VideoPostState extends State<VideoPost>
   }
 
   void _onVisibilityChanged(VisibilityInfo info) {
-    if (info.visibleFraction == 1 && !_videoPlayerController.value.isPlaying) {
+    if (info.visibleFraction == 1 &&
+        !_isPaused && // 이 조건이 없으면 일시정지 상태에서 새로고침을 했을 때 Bug가 발생함
+        !_videoPlayerController.value.isPlaying) {
       _videoPlayerController.play();
     }
   }
