@@ -99,6 +99,7 @@ class _VideoPostState extends State<VideoPost>
     }
     await showModalBottomSheet(
       context: context,
+      isScrollControlled: true, // 기본 크기가 아닌 내가 원하는 크기로 설정하고 싶은 경우 사용
       builder: (context) => const VideoComments(),
       // barrierColor: Colors.red,
       // backgroundColor: Colors.green, // 적용이 안 된 것처럼 보이는 이유는 위에 Scaffold 위젯이 놓여졌기 때문
