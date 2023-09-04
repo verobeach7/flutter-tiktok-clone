@@ -45,7 +45,26 @@ class DiscoverScreen extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            for (var tab in tabs)
+            GridView.builder(
+              padding: const EdgeInsets.all(
+                Sizes.size8,
+              ),
+              itemCount: 20,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // column수
+                crossAxisSpacing: Sizes.size10, // column 사이 간격
+                mainAxisSpacing: Sizes.size10, // row 사이 간격
+                childAspectRatio: 9 / 16, // 각 아이템의 비율을 설정
+              ),
+              itemBuilder: (context, index) => Container(
+                color: Colors.yellow,
+                child: Center(
+                  child: Text("$index"),
+                ),
+              ),
+            ),
+            // tabs.skip(1)은 리스트의 첫번째 항목을 건너띄게 함.
+            for (var tab in tabs.skip(1))
               Center(
                 child: Text(
                   tab,
