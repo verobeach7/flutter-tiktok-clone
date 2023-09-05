@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
@@ -13,20 +14,48 @@ final tabs = [
   "Brands",
 ];
 
-class DiscoverScreen extends StatelessWidget {
+class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
+
+  @override
+  State<DiscoverScreen> createState() => _DiscoverScreenState();
+}
+
+class _DiscoverScreenState extends State<DiscoverScreen> {
+  final TextEditingController _textEditingController =
+      TextEditingController(text: "Initial Text");
+
+  void _onSearchChanged(String value) {
+    print("Searching for $value");
+  }
+
+  void _onSearchSubmitted(String value) {
+    print("Submitted $value");
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           elevation: 0.3,
-          title: const Text("discover"),
+          // CupertinoSearchTextField에는 커서의 색상을 바꿀 수 있는 속성이 없으나 main.dart에서 전체 TextField에 대한 속성을 설정해줄 수 있음
+          title: CupertinoSearchTextField(
+            controller: _textEditingController,
+            onChanged: _onSearchChanged,
+            onSubmitted: _onSearchSubmitted,
+          ),
           // TabBar를 컨트롤러 없이 사용하면 에러 발생함. 가장 쉬운 해결 방법은 DefaultTabController 위젯으로 감싸줌.
           bottom: TabBar(
-              splashFactory: NoSplash.splashFactory,
+              splashFactory: NoSplash.splashFactory, // 클릭 시 잉크 효과 제거
               padding: const EdgeInsets.symmetric(
                 horizontal: Sizes.size16,
               ),
@@ -48,6 +77,8 @@ class DiscoverScreen extends StatelessWidget {
         body: TabBarView(
           children: [
             GridView.builder(
+              // 키보드를 사용하지 않고 GridView를 drag할 때 키보드가 사라지게 하는 기능
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: const EdgeInsets.all(
                 Sizes.size8,
               ),
@@ -61,14 +92,25 @@ class DiscoverScreen extends StatelessWidget {
               // FadeInImage에 사용자가 어떤 비율의 이미지를 올릴지 모르니 AspectRatio를 이용하여 비율을 변환해줌
               itemBuilder: (context, index) => Column(
                 children: [
-                  AspectRatio(
-                    aspectRatio: 9 / 16,
-                    child: FadeInImage.assetNetwork(
-                        // fit: 부모 요소에 어떻게 적용할지를 정해줄 수 있음
-                        fit: BoxFit.cover,
-                        placeholder: "assets/images/placeholder.jpeg",
-                        image:
-                            "https://m.media-amazon.com/images/I/61FmwxvYuJL._AC_UF894,1000_QL80_.jpg"),
+                  // 이미지 모서리를 둥글게 만들기 위해 Container 위젯을 이용
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        Sizes.size3,
+                      ),
+                    ),
+                    // Container 위에 이미지가 overflow되기 때문에 적용이 안 된 것처럼 보임.
+                    // clip.hardEdge를 이용하여 잘라줘야 함.
+                    clipBehavior: Clip.hardEdge,
+                    child: AspectRatio(
+                      aspectRatio: 9 / 16,
+                      child: FadeInImage.assetNetwork(
+                          // fit: 부모 요소에 어떻게 적용할지를 정해줄 수 있음
+                          fit: BoxFit.cover,
+                          placeholder: "assets/images/placeholder.jpeg",
+                          image:
+                              "https://m.media-amazon.com/images/I/61FmwxvYuJL._AC_UF894,1000_QL80_.jpg"),
+                    ),
                   ),
                   Gaps.v10,
                   const Text(
