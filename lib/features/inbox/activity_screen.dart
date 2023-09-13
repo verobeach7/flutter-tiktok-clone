@@ -10,8 +10,29 @@ class ActivityScreen extends StatefulWidget {
   State<ActivityScreen> createState() => _ActivityScreenState();
 }
 
-class _ActivityScreenState extends State<ActivityScreen> {
+class _ActivityScreenState extends State<ActivityScreen>
+    with SingleTickerProviderStateMixin {
+  // Ticker를 주는 Mixin일 뿐만 아니라 위젯트리에 없을 때 리소스 낭비를 막아주는 역할도 함.
   final List<String> _notifications = List.generate(20, (index) => "${index}h");
+
+  // this나 다른 instance member를 참조하려는 경우에도
+  // dart, flutter에서는 late를 사용하는 경우에도 초기화를 함께할 수 있음.
+  // 반드시 initState를 사용하지 않아도 됨.
+  late final AnimationController _animationController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 200),
+  );
+
+/*   @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(vsync: this);
+  } */
+
+  // _animationController와 _animation을 연결
+  // Tween을 사용하는 경우에는 Animation의 Type을 반드시 설정해줘야 함.
+  late final Animation<double> _animation =
+      Tween(begin: 0.0, end: 0.5).animate(_animationController);
 
   void _onDismissed(String notification) {
     // 위젯 트리에서 삭제한 후 setState를 통해 다시 build
@@ -19,12 +40,36 @@ class _ActivityScreenState extends State<ActivityScreen> {
     setState(() {});
   }
 
+  void _onTitleTap() {
+    if (_animationController.isCompleted) {
+      _animationController.reverse();
+    } else {
+      _animationController.forward();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // print(_notifications); // _notifications List 변화를 확인해볼 수 있음
     return Scaffold(
       appBar: AppBar(
-        title: const Text("All activity"),
+        title: GestureDetector(
+          onTap: _onTitleTap,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("All activity"),
+              Gaps.h2,
+              RotationTransition(
+                turns: _animation,
+                child: const FaIcon(
+                  FontAwesomeIcons.chevronDown,
+                  size: Sizes.size14,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
       body: ListView(
         children: [
