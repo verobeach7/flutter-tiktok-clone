@@ -42,6 +42,8 @@ class _ActivityScreenState extends State<ActivityScreen>
     }
   ];
 
+  bool _showBarrier = false;
+
   // this나 다른 instance member를 참조하려는 경우에도
   // dart, flutter에서는 late를 사용하는 경우에도 초기화를 함께할 수 있음.
   // 반드시 initState를 사용하지 않아도 됨.
@@ -70,18 +72,29 @@ class _ActivityScreenState extends State<ActivityScreen>
     end: Offset.zero,
   ).animate(_animationController);
 
+  late final Animation<Color?> _barrierAnimation = ColorTween(
+    begin: Colors.transparent,
+    end: Colors.black38,
+  ).animate(_animationController);
+
   void _onDismissed(String notification) {
     // 위젯 트리에서 삭제한 후 setState를 통해 다시 build
     _notifications.remove(notification);
     setState(() {});
   }
 
-  void _onTitleTap() {
+  void _onToggleAnimations() async {
     if (_animationController.isCompleted) {
-      _animationController.reverse();
+      // animationController.forward와 .reverse는 TickerFuture이기 때문에 await을 이용하여 애니메이션이 완료되기까지 기다리게 할 수 있음
+      await _animationController.reverse();
     } else {
       _animationController.forward();
     }
+
+    // Barrier가 보여지는 상황인지 보이지 않는 상황인지에 따라 위젯을 보이게 또는 보이지 않게 할 수 있음
+    setState(() {
+      _showBarrier = !_showBarrier;
+    });
   }
 
   @override
@@ -90,7 +103,7 @@ class _ActivityScreenState extends State<ActivityScreen>
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
-          onTap: _onTitleTap,
+          onTap: _onToggleAnimations,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -211,6 +224,12 @@ class _ActivityScreenState extends State<ActivityScreen>
                 ),
             ],
           ),
+          if (_showBarrier)
+            AnimatedModalBarrier(
+              color: _barrierAnimation,
+              dismissible: true,
+              onDismiss: _onToggleAnimations,
+            ),
           SlideTransition(
             position: _panelAnimation,
             child: Container(
