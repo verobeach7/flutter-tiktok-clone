@@ -103,9 +103,11 @@ class _ActivityScreenState extends State<ActivityScreen>
     // print(_notifications); // _notifications List 변화를 확인해볼 수 있음
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: GestureDetector(
           onTap: _onToggleAnimations,
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text("All activity"),
