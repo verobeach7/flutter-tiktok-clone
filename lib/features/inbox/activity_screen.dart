@@ -84,6 +84,7 @@ class _ActivityScreenState extends State<ActivityScreen>
   }
 
   void _onToggleAnimations() async {
+    if (_animationController.isAnimating) return;
     if (_animationController.isCompleted) {
       // animationController.forward와 .reverse는 TickerFuture이기 때문에 await을 이용하여 애니메이션이 완료되기까지 기다리게 할 수 있음
       await _animationController.reverse();
