@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiktok_clone/constants/sizes.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
@@ -13,10 +14,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     return CustomScrollView(
       slivers: [
         SliverAppBar(
-          floating: true, // 위로 스크롤하면 사라졌던 appBar를 다시 나타나게 해줌
           stretch: true, // appBar를 최대 높이보다 더 커지게 할 수도 있음
           pinned: true, // 아래로 스크롤해도 완전히 사라지지 않고 배경색과 타이틀을 보여줌
-          snap: true, // 스크롤하는 순간 자석처럼 붙게 함, floating과 함께 사용 가능
           backgroundColor: Colors.teal,
           collapsedHeight: 80, // appBar의 최소 높이
           expandedHeight: 200, // appBar의 최대 높이
@@ -50,7 +49,25 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
           ),
           itemExtent: 100, // item의 height를 설정
-        )
+        ),
+        SliverGrid(
+          delegate: SliverChildBuilderDelegate(
+            childCount: 50,
+            (context, index) => Container(
+              color: Colors.blue[100 * (index % 9)],
+              child: Align(
+                alignment: Alignment.center,
+                child: Text("Item $index"),
+              ),
+            ),
+          ),
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 100,
+            mainAxisSpacing: Sizes.size20,
+            crossAxisSpacing: Sizes.size20,
+            childAspectRatio: 1,
+          ),
+        ),
       ],
     );
   }
