@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/users/widgets/user_info.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
@@ -14,110 +17,74 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     return CustomScrollView(
       slivers: [
         SliverAppBar(
-          stretch: true, // appBar를 최대 높이보다 더 커지게 할 수도 있음
-          pinned: true, // 아래로 스크롤해도 완전히 사라지지 않고 배경색과 타이틀을 보여줌
-          backgroundColor: Colors.teal,
-          collapsedHeight: 80, // appBar의 최소 높이
-          expandedHeight: 200, // appBar의 최대 높이
-          flexibleSpace: FlexibleSpaceBar(
-            stretchModes: const [
-              StretchMode.blurBackground, // 늘어날 때 블러 효과
-              StretchMode.fadeTitle, // 늘어날 때 자막을 사라지게 함
-              StretchMode.zoomBackground // 늘어날 때 배경 확대
-            ],
-            background: Image.asset(
-              "assets/images/placeholder.jpeg",
-              fit: BoxFit.cover,
-            ),
-            title: const Text(
-              "Hello",
-              style: TextStyle(
-                color: Colors.black,
+          title: const Text(
+            "verobeach",
+          ),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: const FaIcon(
+                FontAwesomeIcons.gear,
+                size: Sizes.size20,
               ),
             ),
-          ),
+          ],
         ),
-        const SliverToBoxAdapter(
+        SliverToBoxAdapter(
           child: Column(
             children: [
-              CircleAvatar(
-                backgroundColor: Colors.red,
-                radius: 20,
+              const CircleAvatar(
+                radius: 50,
+                foregroundImage: NetworkImage(
+                    "https://avatars.githubusercontent.com/u/60215757?v=4"),
+                child: Text("verobeach"),
+              ),
+              Gaps.v20,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "@verobeach7",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Gaps.h5,
+                  FaIcon(
+                    FontAwesomeIcons.solidCircleCheck,
+                    size: Sizes.size16,
+                    color: Colors.blue.shade500,
+                  ),
+                ],
+              ),
+              Gaps.v24,
+              SizedBox(
+                height: Sizes.size48,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const UserInfo(counts: "37", countsType: "Followings"),
+                    _verticalDivider(),
+                    const UserInfo(counts: "10.5M", countsType: "Followers"),
+                    _verticalDivider(),
+                    const UserInfo(counts: "194,3M", countsType: "Likes")
+                  ],
+                ),
               ),
             ],
           ),
-        ),
-        SliverFixedExtentList(
-          delegate: SliverChildBuilderDelegate(
-            childCount: 50,
-            (context, index) => Container(
-              color: Colors.amber[100 * (index % 9)],
-              child: Align(
-                alignment: Alignment.center,
-                child: Text("Item $index"),
-              ),
-            ),
-          ),
-          itemExtent: 100, // item의 height를 설정
-        ),
-        SliverPersistentHeader(
-          delegate: CustomDelegate(),
-          pinned: true,
-          // floating: true,
-        ),
-        SliverGrid(
-          delegate: SliverChildBuilderDelegate(
-            childCount: 50,
-            (context, index) => Container(
-              color: Colors.blue[100 * (index % 9)],
-              child: Align(
-                alignment: Alignment.center,
-                child: Text("Item $index"),
-              ),
-            ),
-          ),
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 100,
-            mainAxisSpacing: Sizes.size20,
-            crossAxisSpacing: Sizes.size20,
-            childAspectRatio: 1,
-          ),
-        ),
+        )
       ],
     );
   }
 }
 
-class CustomDelegate extends SliverPersistentHeaderDelegate {
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: Colors.indigo,
-      child: const FractionallySizedBox(
-        heightFactor: 1,
-        child: Center(
-          child: Text(
-            'Title!!!!!',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  // maxExtent: max height - getter
-  double get maxExtent => 150;
-
-  @override
-  // minExtent: min height - getter
-  double get minExtent => 80;
-
-  @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
-    return false;
-  }
+VerticalDivider _verticalDivider() {
+  return VerticalDivider(
+    width: Sizes.size32,
+    thickness: Sizes.size1,
+    color: Colors.grey.shade400,
+    indent: Sizes.size14,
+    endIndent: Sizes.size14,
+  );
 }
