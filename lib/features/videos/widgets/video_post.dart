@@ -67,6 +67,9 @@ class _VideoPostState extends State<VideoPost>
   }
 
   void _onVisibilityChanged(VisibilityInfo info) {
+    // 모든 stateful widget은 mounted라는 프로퍼티를 가지고 있음!
+    // mounted 프로퍼티는 위젯이 mount되어 있는지를 알려줌.
+    if (!mounted) return;
     if (info.visibleFraction == 1 &&
         !_isPaused && // 이 조건이 없으면 일시정지 상태에서 새로고침을 했을 때 Bug가 발생함
         !_videoPlayerController.value.isPlaying) {
