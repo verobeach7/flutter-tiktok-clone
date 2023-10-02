@@ -71,9 +71,46 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ],
                 ),
               ),
+              Gaps.v14,
+              FractionallySizedBox(
+                widthFactor: 0.33,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: Sizes.size12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(
+                        Sizes.size4,
+                      ),
+                    ),
+                  ),
+                  child: const Text(
+                    "Follow",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              Gaps.v14,
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: Sizes.size32,
+                ),
+                child: Text(
+                  "All highlights and where to watch live matches on FIFA+ I wonder how it would look",
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Gaps.v14,
+              const Row()
             ],
           ),
-        )
+        ),
       ],
     );
   }
