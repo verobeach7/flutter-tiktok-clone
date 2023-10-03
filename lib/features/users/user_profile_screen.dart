@@ -74,33 +74,84 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           const UserInfo(
                               counts: "10.5M", countsType: "Followers"),
                           _verticalDivider(),
-                          const UserInfo(counts: "194,3M", countsType: "Likes")
+                          const UserInfo(counts: "194.3M", countsType: "Likes")
                         ],
                       ),
                     ),
                     Gaps.v14,
-                    FractionallySizedBox(
-                      widthFactor: 0.33,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: Sizes.size12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(
-                              Sizes.size4,
+                    SizedBox(
+                      height: Sizes.size44,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Sizes.size48,
+                              vertical: Sizes.size12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              border: Border.all(
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(
+                                  Sizes.size2,
+                                ),
+                              ),
+                            ),
+                            child: const Text(
+                              "Follow",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ),
-                        ),
-                        child: const Text(
-                          "Follow",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
+                          Gaps.h4,
+                          AspectRatio(
+                            aspectRatio: 1,
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.grey.shade300,
+                                ),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(
+                                    Sizes.size2,
+                                  ),
+                                ),
+                              ),
+                              child: const FaIcon(
+                                FontAwesomeIcons.youtube,
+                                size: Sizes.size20,
+                              ),
+                            ),
                           ),
-                          textAlign: TextAlign.center,
-                        ),
+                          Gaps.h4,
+                          AspectRatio(
+                            aspectRatio: 1,
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.grey.shade300,
+                                ),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(
+                                    Sizes.size2,
+                                  ),
+                                ),
+                              ),
+                              child: const FaIcon(
+                                FontAwesomeIcons.caretDown,
+                                size: Sizes.size14,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Gaps.v14,
@@ -162,12 +213,38 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     // 이미지 모서리를 둥글게 만들기 위해 Container 위젯을 이용
                     AspectRatio(
                       aspectRatio: 9 / 12,
-                      child: FadeInImage.assetNetwork(
-                          // fit: 부모 요소에 어떻게 적용할지를 정해줄 수 있음
-                          fit: BoxFit.cover,
-                          placeholder: "assets/images/placeholder.jpeg",
-                          image:
-                              "https://m.media-amazon.com/images/I/61FmwxvYuJL._AC_UF894,1000_QL80_.jpg"),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: FadeInImage.assetNetwork(
+                                // fit: 부모 요소에 어떻게 적용할지를 정해줄 수 있음
+                                fit: BoxFit.cover,
+                                placeholder: "assets/images/placeholder.jpeg",
+                                image:
+                                    "https://m.media-amazon.com/images/I/61FmwxvYuJL._AC_UF894,1000_QL80_.jpg"),
+                          ),
+                          const Positioned(
+                            left: 0,
+                            bottom: 0,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.play_arrow_outlined,
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  "4.1M",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: Sizes.size12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
