@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -26,24 +27,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: ListView(
         children: [
-          CupertinoSwitch(
-            value: _notifications,
-            onChanged: _onNotificationChanged,
-          ),
-          Switch(
-            value: _notifications,
-            onChanged: _onNotificationChanged,
-          ),
-          // iOS와 android를 구분하여 보여줌(Cupertino vs Material), 적응형 위젯
-          Switch.adaptive(
-              value: _notifications, onChanged: _onNotificationChanged),
-          SwitchListTile(
-            value: _notifications,
-            onChanged: _onNotificationChanged,
-            title: const Text(
-              "Enable notifications",
-            ),
-          ),
           // SwitchListTile 사용을 추천!!!
           SwitchListTile.adaptive(
             value: _notifications,
@@ -52,10 +35,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               "Enable notifications",
             ),
             subtitle: const Text("Enable notifications"),
-          ),
-          Checkbox(
-            value: _notifications,
-            onChanged: _onNotificationChanged,
           ),
           CheckboxListTile(
             activeColor: Colors.black,
@@ -99,6 +78,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
               print(booking);
             },
             title: const Text("What is your birthday"),
+          ),
+          ListTile(
+            title: const Text("Log out (iOS)"),
+            textColor: Colors.red,
+            onTap: () {
+              showCupertinoDialog(
+                // 새로운 화면을 Navigator 한 것
+                context: context,
+                builder: (context) => CupertinoAlertDialog(
+                  title: const Text("Are you sure?"),
+                  content: const Text("Please don't go"),
+                  actions: [
+                    CupertinoDialogAction(
+                      // 화면을 없애고 이전의 화면으로 돌아가기 위해서 pop 해주기
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text("No"),
+                    ),
+                    CupertinoDialogAction(
+                      onPressed: () => Navigator.of(context).pop(),
+                      isDestructiveAction: true,
+                      child: const Text("Yes"),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text("Log out (android)"),
+            textColor: Colors.red,
+            onTap: () {
+              showDialog(
+                // 새로운 화면을 Navigator 한 것
+                context: context,
+                builder: (context) => AlertDialog(
+                  icon: const FaIcon(
+                    FontAwesomeIcons.skull,
+                  ),
+                  title: const Text("Are you sure?"),
+                  content: const Text("Please don't go"),
+                  actions: [
+                    IconButton(
+                      // 화면을 없애고 이전의 화면으로 돌아가기 위해서 pop 해주기
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const FaIcon(FontAwesomeIcons.car),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text("Yes"),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
           const AboutListTile(),
         ],
