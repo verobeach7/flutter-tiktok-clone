@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/settings/settings_screen.dart';
@@ -24,6 +25,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return SafeArea(
       child: DefaultTabController(
         length: 2,
@@ -210,8 +212,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     ScrollViewKeyboardDismissBehavior.onDrag,
                 itemCount: 20,
                 padding: EdgeInsets.zero,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, // column수
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: width > Breakpoints.lg ? 5 : 3, // column수
                   crossAxisSpacing: Sizes.size2, // column 사이 간격
                   mainAxisSpacing: Sizes.size1, // row 사이 간격
                   childAspectRatio: 9 / 12, // 각 아이템의 비율을 설정

@@ -81,7 +81,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                 height: Sizes.size44,
                 width: MediaQuery.of(context).size.width - 70,
                 alignment: const Alignment(0, 0),
-                child: ConstrainedBox(
+                child: Container(
                   constraints: const BoxConstraints(
                     maxWidth: Breakpoints.sm,
                   ),
