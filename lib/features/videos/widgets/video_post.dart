@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
@@ -32,12 +33,18 @@ class _VideoPostState extends State<VideoPost>
 
   bool _isPaused = false;
 
+  bool _isMuted = false;
+
   bool _isEllipsis = true;
 
   // 시간이 소요되므로 비동기 작업 필요 async-await
   void _initVideoPlayer() async {
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
+    if (kIsWeb) {
+      await _videoPlayerController.setVolume(0);
+      _isMuted = true;
+    }
     // video가 끝나는 시점을 알려주기 위해서 다음 과정 필요
     // addListener가 영상이 바뀌는 시간, 길이, 끝나는 시간 등을 모두 알려줄 수 있음
     // _videoPlayerController.addListener(_onVideoChange);
@@ -92,6 +99,16 @@ class _VideoPostState extends State<VideoPost>
     setState(() {
       _isPaused = !_isPaused;
     });
+  }
+
+  void _onVolumeTap() async {
+    _isMuted = !_isMuted;
+    if (_isMuted) {
+      await _videoPlayerController.setVolume(0);
+    } else {
+      await _videoPlayerController.setVolume(1);
+    }
+    setState(() {});
   }
 
   void _onToggleEllipsis() {
@@ -159,6 +176,33 @@ class _VideoPostState extends State<VideoPost>
                     ),
                   ),
                 ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 10,
+            right: 10,
+            child: GestureDetector(
+              onTap: _onVolumeTap,
+              child: Container(
+                height: 30,
+                width: 30,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey,
+                ),
+                child: _isMuted
+                    ? const FaIcon(
+                        FontAwesomeIcons.volumeOff,
+                        color: Colors.white,
+                        size: Sizes.size14,
+                      )
+                    : const FaIcon(
+                        FontAwesomeIcons.volumeHigh,
+                        color: Colors.white,
+                        size: Sizes.size14,
+                      ),
               ),
             ),
           ),
