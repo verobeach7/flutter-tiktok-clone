@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/main_navigation/main_navigation_screen.dart';
+import 'package:tiktok_clone/utils.dart';
 
 // state에 저장하기 위해서 enum 생성
 enum Direction { rigth, left }
@@ -114,6 +115,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
           duration: const Duration(milliseconds: 300),
           opacity: _showingPage == Page.first ? 0 : 1,
           child: BottomAppBar(
+            color: isDarkMode(context) ? Colors.black : Colors.white,
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 vertical: Sizes.size24,
