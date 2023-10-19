@@ -41,6 +41,8 @@ dependencies:
 
   visibility_detector: 0.3.3
 
+  google_fonts: ^6.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
