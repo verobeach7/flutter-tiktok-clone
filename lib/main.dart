@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-import 'package:tiktok_clone/features/main_navigation/main_navigation_screen.dart';
+import 'package:tiktok_clone/features/authentication/sign_up_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,8 +28,16 @@ class TikTokApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false, // debug 모드 표시를 제거해줌
       title: 'TikTok Clone',
+      // themeMode: ThemeMode.light, // 기기 설정이 다크모드로 되어있어도 강제로 light모드로 실행
+      // themeMode: ThemeMode.dark, // 기기 설정이 다크모드로 되어있어도 강제로 dark모드로 실행
+      themeMode: ThemeMode.system, // 기기 설정에 따라 실행
       theme: ThemeData(
+        brightness: Brightness
+            .light, // 따로 TextStyle을 지정하지 않은 부분은 자동으로 light모드에서 잘 보이도록 설정해줌
         scaffoldBackgroundColor: Colors.white,
+        bottomAppBarTheme: BottomAppBarTheme(
+          color: Colors.grey.shade50,
+        ),
         primaryColor: const Color(0xFFE9435A),
         textSelectionTheme: const TextSelectionThemeData(
           cursorColor: Color(0xFFE9435A),
@@ -48,8 +56,16 @@ class TikTokApp extends StatelessWidget {
           ),
         ),
       ),
-      // home: const SignUpScreen(),
-      home: const MainNavigationScreen(),
+      darkTheme: ThemeData(
+        brightness:
+            Brightness.dark, // 따로 TextStyle을 지정한 부분은 brightness로 자동 적용되지 않음
+        scaffoldBackgroundColor: Colors.black,
+        bottomAppBarTheme: BottomAppBarTheme(
+          color: Colors.grey.shade800,
+        ),
+        primaryColor: const Color(0xFFE9435A),
+      ),
+      home: const SignUpScreen(),
     );
   }
 }

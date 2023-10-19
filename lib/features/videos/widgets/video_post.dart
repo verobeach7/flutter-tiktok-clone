@@ -180,8 +180,8 @@ class _VideoPostState extends State<VideoPost>
             ),
           ),
           Positioned(
-            top: 10,
-            right: 10,
+            top: 60,
+            right: 20,
             child: GestureDetector(
               onTap: _onVolumeTap,
               child: Container(
