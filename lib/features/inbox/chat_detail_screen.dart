@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/utils.dart';
 
 class ChatDetailScreen extends StatefulWidget {
   const ChatDetailScreen({super.key});
@@ -57,14 +58,16 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = isDarkMode(context);
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: isDark ? null : Colors.grey.shade50,
       appBar: AppBar(
-        backgroundColor: Colors.grey.shade50,
+        backgroundColor: isDark ? null : Colors.grey.shade50,
         title: ListTile(
           contentPadding: EdgeInsets.zero,
           horizontalTitleGap: Sizes.size8,
           leading: Stack(
+            clipBehavior: Clip.none,
             children: [
               const CircleAvatar(
                 radius: Sizes.size20 + Sizes.size2,
@@ -73,11 +76,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 child: Text("희성"),
               ),
               Positioned(
-                bottom: -3,
+                bottom: -1,
                 right: -3,
                 child: Container(
-                  width: Sizes.size20,
-                  height: Sizes.size20,
+                  width: Sizes.size18,
+                  height: Sizes.size18,
                   decoration: BoxDecoration(
                     color: Colors.green.shade400,
                     border: Border.all(
@@ -89,7 +92,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
           title: const Text(
@@ -99,18 +102,18 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             ),
           ),
           subtitle: const Text("Active now"),
-          trailing: const Row(
+          trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               FaIcon(
                 FontAwesomeIcons.flag,
-                color: Colors.black,
+                color: isDark ? Colors.grey.shade200 : Colors.black,
                 size: Sizes.size20,
               ),
               Gaps.h28,
               FaIcon(
                 FontAwesomeIcons.ellipsis,
-                color: Colors.black,
+                color: isDark ? Colors.grey.shade200 : Colors.black,
                 size: Sizes.size20,
               ),
             ],
@@ -179,7 +182,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 bottom: 0,
                 width: MediaQuery.of(context).size.width,
                 child: BottomAppBar(
-                  color: Colors.grey.shade200,
+                  color: isDark ? null : Colors.grey.shade200,
                   elevation: 0,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -197,7 +200,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                 right: 4,
                                 bottom: 0,
                                 child: CustomPaint(
-                                  painter: ChatBubbleTriangle(),
+                                  painter: ChatBubbleTriangle(isDark),
                                 ),
                               ),
                               TextField(
@@ -221,7 +224,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                     borderSide: BorderSide.none,
                                   ),
                                   filled: true,
-                                  fillColor: Colors.white,
+                                  fillColor: isDark
+                                      ? Colors.grey.shade800
+                                      : Colors.white,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: Sizes.size20,
                                     vertical: Sizes.size4,
@@ -230,13 +235,13 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                   hintStyle: TextStyle(
                                     color: Colors.grey.shade600,
                                   ),
-                                  suffixIcon: const Row(
+                                  suffixIcon: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Gaps.h10,
                                       FaIcon(
                                         FontAwesomeIcons.faceSmile,
-                                        color: Colors.black,
+                                        color: isDark ? null : Colors.black,
                                       ),
                                     ],
                                   ),
@@ -279,9 +284,13 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 }
 
 class ChatBubbleTriangle extends CustomPainter {
+  final bool isDark;
+
+  ChatBubbleTriangle(this.isDark);
+
   @override
   void paint(Canvas canvas, Size size) {
-    var paint = Paint()..color = Colors.white;
+    var paint = Paint()..color = isDark ? Colors.grey.shade800 : Colors.white;
 
     var path = Path();
     path.lineTo(-15, 0);
