@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/utils.dart';
 
 class PostVideoButton extends StatelessWidget {
   const PostVideoButton({
@@ -14,6 +15,7 @@ class PostVideoButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = isDarkMode(context);
     return Stack(
       // Positioned 위젯은 위치 이동 시 Stack의 영역을 벗어나면 clipping 됨
       // 이를 clipping하지 못하게 하기 위해서 다음을 사용
@@ -61,7 +63,7 @@ class PostVideoButton extends StatelessWidget {
             horizontal: Sizes.size12,
           ),
           decoration: BoxDecoration(
-            color: inverted ? Colors.black : Colors.white,
+            color: !inverted || isDark ? Colors.white : Colors.black,
             borderRadius: BorderRadius.circular(
               Sizes.size6,
             ),
@@ -69,7 +71,7 @@ class PostVideoButton extends StatelessWidget {
           child: Center(
             child: FaIcon(
               FontAwesomeIcons.plus,
-              color: inverted ? Colors.white : Colors.black,
+              color: !inverted || isDark ? Colors.black : Colors.white,
               size: 18,
             ),
           ),

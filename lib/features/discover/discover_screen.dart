@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/utils.dart';
 
 final tabs = [
   "Top",
@@ -99,7 +101,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                         borderSide: BorderSide.none,
                       ),
                       filled: true,
-                      fillColor: Colors.grey.shade200,
+                      fillColor: isDarkMode(context)
+                          ? Colors.grey.shade800
+                          : Colors.grey.shade200,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: Sizes.size20,
                       ),
@@ -114,7 +118,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                             FaIcon(
                               FontAwesomeIcons.magnifyingGlass,
                               size: Sizes.size20,
-                              color: Colors.grey.shade800,
+                              color: isDarkMode(context)
+                                  ? Colors.grey.shade200
+                                  : Colors.grey.shade800,
                             ),
                           ],
                         ),
@@ -161,9 +167,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               fontWeight: FontWeight.w600,
               fontSize: Sizes.size16,
             ),
-            indicatorColor: Colors.black,
-            labelColor: Colors.black,
-            unselectedLabelColor: Colors.grey.shade500,
+            indicatorColor: Theme.of(context).tabBarTheme.indicatorColor,
             tabs: [
               for (var tab in tabs)
                 Tab(
@@ -227,10 +231,13 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       Gaps.v5,
                       // DefaultTextStyle을 사용하여 Text 자식 요소 모두에게 동일한 스타일을 적용 가능
                       if (constraints.maxWidth < 193.8 ||
-                          constraints.maxWidth > 250)
+                          constraints.maxWidth > 250 ||
+                          !kIsWeb)
                         DefaultTextStyle(
                           style: TextStyle(
-                            color: Colors.grey.shade600,
+                            color: isDarkMode(context)
+                                ? Colors.grey.shade300
+                                : Colors.grey.shade600,
                             fontWeight: FontWeight.w600,
                           ),
                           child: Row(
@@ -252,7 +259,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                               FaIcon(
                                 FontAwesomeIcons.heart,
                                 size: Sizes.size16,
-                                color: Colors.grey.shade600,
+                                color: isDarkMode(context)
+                                    ? Colors.grey.shade300
+                                    : Colors.grey.shade600,
                               ),
                               Gaps.h2,
                               const Text(
