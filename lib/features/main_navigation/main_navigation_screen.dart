@@ -68,7 +68,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     return Scaffold(
       resizeToAvoidBottomInset:
           false, // 키보드가 올라올 때 body(video_timeline_screen>video_post)가 찌그러지는 것을 막아줌
-      backgroundColor: _selectedIndex == 0 ? Colors.black : Colors.white,
+      // user_profile_screen.dart의 scaffold가 main_navigation_screen.dart이므로 여기서 배경색을 결정해줘야함
+      backgroundColor:
+          _selectedIndex == 0 || isDark ? Colors.black : Colors.white,
       body: Stack(
         children: [
           Offstage(
