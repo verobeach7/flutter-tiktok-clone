@@ -23,163 +23,159 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Localizations.override(
-      context: context,
-      locale: const Locale("es"),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Settings"),
-        ),
-        body: Align(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: Breakpoints.sm,
-            ),
-            child: ListView(
-              children: [
-                // SwitchListTile 사용을 추천!!!
-                SwitchListTile.adaptive(
-                  value: _notifications,
-                  onChanged: _onNotificationChanged,
-                  title: const Text(
-                    "Enable notifications",
-                  ),
-                  subtitle: const Text("Enable notifications"),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Settings"),
+      ),
+      body: Align(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: Breakpoints.sm,
+          ),
+          child: ListView(
+            children: [
+              // SwitchListTile 사용을 추천!!!
+              SwitchListTile.adaptive(
+                value: _notifications,
+                onChanged: _onNotificationChanged,
+                title: const Text(
+                  "Enable notifications",
                 ),
-                CheckboxListTile(
-                  activeColor: Colors.black,
-                  checkColor: Colors.white,
-                  value: _notifications,
-                  onChanged: _onNotificationChanged,
-                  title: const Text("Enable notifications"),
-                ),
-                ListTile(
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(1980),
-                      lastDate: DateTime(2030),
-                    );
-                    if (kDebugMode) {
-                      print(date);
-                    }
-                    if (!mounted) return;
-                    final time = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (kDebugMode) {
-                      print(time);
-                    }
-                    if (!mounted) return;
-                    final booking = await showDateRangePicker(
-                      context: context,
-                      firstDate: DateTime(1980),
-                      lastDate: DateTime(2030),
-                      // 배경색과 글씨색이 같아서 보이지 않는 부분들이 있음
-                      // builder를 통해 해결
-                      builder: (context, child) {
-                        return Theme(
-                            data: ThemeData(
-                              appBarTheme: const AppBarTheme(
-                                foregroundColor: Colors.white,
-                                backgroundColor: Colors.black,
-                              ),
+                subtitle: const Text("Enable notifications"),
+              ),
+              CheckboxListTile(
+                activeColor: Colors.black,
+                checkColor: Colors.white,
+                value: _notifications,
+                onChanged: _onNotificationChanged,
+                title: const Text("Enable notifications"),
+              ),
+              ListTile(
+                onTap: () async {
+                  final date = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1980),
+                    lastDate: DateTime(2030),
+                  );
+                  if (kDebugMode) {
+                    print(date);
+                  }
+                  if (!mounted) return;
+                  final time = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                  );
+                  if (kDebugMode) {
+                    print(time);
+                  }
+                  if (!mounted) return;
+                  final booking = await showDateRangePicker(
+                    context: context,
+                    firstDate: DateTime(1980),
+                    lastDate: DateTime(2030),
+                    // 배경색과 글씨색이 같아서 보이지 않는 부분들이 있음
+                    // builder를 통해 해결
+                    builder: (context, child) {
+                      return Theme(
+                          data: ThemeData(
+                            appBarTheme: const AppBarTheme(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.black,
                             ),
-                            child: child!);
-                      },
-                    );
-                    if (kDebugMode) {
-                      print(booking);
-                    }
-                  },
-                  title: const Text("What is your birthday"),
-                ),
-                ListTile(
-                  title: const Text("Log out (iOS)"),
-                  textColor: Colors.red,
-                  onTap: () {
-                    showCupertinoDialog(
-                      // 새로운 화면을 Navigator 한 것
-                      context: context,
-                      builder: (context) => CupertinoAlertDialog(
-                        title: const Text("Are you sure?"),
-                        content: const Text("Please don't go"),
-                        actions: [
-                          CupertinoDialogAction(
-                            // 화면을 없애고 이전의 화면으로 돌아가기 위해서 pop 해주기
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text("No"),
                           ),
-                          CupertinoDialogAction(
-                            onPressed: () => Navigator.of(context).pop(),
-                            isDestructiveAction: true,
-                            child: const Text("Yes"),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text("Log out (android)"),
-                  textColor: Colors.red,
-                  onTap: () {
-                    showDialog(
-                      // 새로운 화면을 Navigator 한 것
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        icon: const FaIcon(
-                          FontAwesomeIcons.skull,
+                          child: child!);
+                    },
+                  );
+                  if (kDebugMode) {
+                    print(booking);
+                  }
+                },
+                title: const Text("What is your birthday"),
+              ),
+              ListTile(
+                title: const Text("Log out (iOS)"),
+                textColor: Colors.red,
+                onTap: () {
+                  showCupertinoDialog(
+                    // 새로운 화면을 Navigator 한 것
+                    context: context,
+                    builder: (context) => CupertinoAlertDialog(
+                      title: const Text("Are you sure?"),
+                      content: const Text("Please don't go"),
+                      actions: [
+                        CupertinoDialogAction(
+                          // 화면을 없애고 이전의 화면으로 돌아가기 위해서 pop 해주기
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text("No"),
                         ),
-                        title: const Text("Are you sure?"),
-                        content: const Text("Please don't go"),
-                        actions: [
-                          IconButton(
-                            // 화면을 없애고 이전의 화면으로 돌아가기 위해서 pop 해주기
-                            onPressed: () => Navigator.of(context).pop(),
-                            icon: const FaIcon(FontAwesomeIcons.car),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text("Yes"),
-                          ),
-                        ],
+                        CupertinoDialogAction(
+                          onPressed: () => Navigator.of(context).pop(),
+                          isDestructiveAction: true,
+                          child: const Text("Yes"),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text("Log out (android)"),
+                textColor: Colors.red,
+                onTap: () {
+                  showDialog(
+                    // 새로운 화면을 Navigator 한 것
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      icon: const FaIcon(
+                        FontAwesomeIcons.skull,
                       ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text("Log out (iOS / Bottom)"),
-                  textColor: Colors.red,
-                  onTap: () {
-                    // showCupertinoModalPopup은 Cupertino와 Material을 가리지 않고 잘 작동함
-                    showCupertinoModalPopup(
-                      // 새로운 화면을 Navigator 한 것
-                      context: context,
-                      builder: (context) => CupertinoActionSheet(
-                        title: const Text("Are you sure?"),
-                        message: const Text("Please don't go~~~"),
-                        actions: [
-                          CupertinoActionSheetAction(
-                            isDefaultAction: true,
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text("Not log out"),
-                          ),
-                          CupertinoActionSheetAction(
-                            isDestructiveAction: true,
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text("Yes Plz"),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                const AboutListTile(),
-              ],
-            ),
+                      title: const Text("Are you sure?"),
+                      content: const Text("Please don't go"),
+                      actions: [
+                        IconButton(
+                          // 화면을 없애고 이전의 화면으로 돌아가기 위해서 pop 해주기
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const FaIcon(FontAwesomeIcons.car),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text("Yes"),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text("Log out (iOS / Bottom)"),
+                textColor: Colors.red,
+                onTap: () {
+                  // showCupertinoModalPopup은 Cupertino와 Material을 가리지 않고 잘 작동함
+                  showCupertinoModalPopup(
+                    // 새로운 화면을 Navigator 한 것
+                    context: context,
+                    builder: (context) => CupertinoActionSheet(
+                      title: const Text("Are you sure?"),
+                      message: const Text("Please don't go~~~"),
+                      actions: [
+                        CupertinoActionSheetAction(
+                          isDefaultAction: true,
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text("Not log out"),
+                        ),
+                        CupertinoActionSheetAction(
+                          isDestructiveAction: true,
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text("Yes Plz"),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              const AboutListTile(),
+            ],
           ),
         ),
       ),
