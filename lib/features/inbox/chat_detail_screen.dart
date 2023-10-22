@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
@@ -36,7 +37,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   void _onMessageSubmitted(String value) {
     if (!_isMessage) return;
-    print("Submitted $value");
+    if (kDebugMode) {
+      print("Submitted $value");
+    }
     setState(() {
       _message = "";
       _isMessage = false;

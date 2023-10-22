@@ -6,7 +6,6 @@ import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/settings/settings_screen.dart';
 import 'package:tiktok_clone/features/users/widgets/persistent_tab_bar.dart';
 import 'package:tiktok_clone/features/users/widgets/user_info.dart';
-import 'package:tiktok_clone/utils.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
@@ -27,7 +26,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final isDark = isDarkMode(context);
+    // final isDark = isDarkMode(context);
     return Scaffold(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       body: SafeArea(

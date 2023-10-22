@@ -39,11 +39,15 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     setState(() {
       _isWriting = true;
     });
-    print("Searching for $value");
+    if (kDebugMode) {
+      print("Searching for $value");
+    }
   }
 
   void _onSearchSubmitted(String value) {
-    print("Submitted $value");
+    if (kDebugMode) {
+      print("Submitted $value");
+    }
   }
 
   void _deleteWriting() {

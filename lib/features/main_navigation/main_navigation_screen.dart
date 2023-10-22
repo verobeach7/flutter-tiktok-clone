@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
@@ -45,21 +46,27 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     setState(() {
       _isTabDown = true;
     });
-    print("Down: true");
+    if (kDebugMode) {
+      print("Down: true");
+    }
   }
 
   void _onPostVideoButtonTapCancel() {
     setState(() {
       _isTabDown = false;
     });
-    print("Cancel: false");
+    if (kDebugMode) {
+      print("Cancel: false");
+    }
   }
 
   void _onPostVideoButtonTapUp() {
     setState(() {
       _isTabDown = false;
     });
-    print("Up: false");
+    if (kDebugMode) {
+      print("Up: false");
+    }
   }
 
   @override

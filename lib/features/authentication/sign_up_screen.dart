@@ -28,6 +28,7 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(Localizations.localeOf(context));
     return OrientationBuilder(
       // Landscape, Portrait를 구분해줌
       builder: (context, orientation) {
