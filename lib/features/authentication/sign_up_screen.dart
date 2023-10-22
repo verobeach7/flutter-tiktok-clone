@@ -100,12 +100,13 @@ class SignUpScreen extends StatelessWidget {
               ),
             ),
           ),
-          bottomNavigationBar: BottomAppBar(
+          // BottomAppBar 대신 Container 사용
+          bottomNavigationBar: Container(
             color: isDarkMode(context) ? null : Colors.grey.shade50,
-            elevation: 0,
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: Sizes.size32,
+              padding: const EdgeInsets.only(
+                top: Sizes.size32,
+                bottom: Sizes.size64,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

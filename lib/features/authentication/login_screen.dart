@@ -26,7 +26,9 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Sizes.size40),
+          padding: const EdgeInsets.symmetric(
+            horizontal: Sizes.size40,
+          ),
           child: Column(
             children: [
               Gaps.v80,
@@ -63,12 +65,12 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: Container(
         color: isDarkMode(context) ? null : Colors.grey.shade50,
-        elevation: 0,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: Sizes.size32,
+          padding: const EdgeInsets.only(
+            top: Sizes.size32,
+            bottom: Sizes.size64,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
