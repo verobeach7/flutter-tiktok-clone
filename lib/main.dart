@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/sign_up_screen.dart';
-import 'package:flutter_gen/gen_l10n/intl_generated.dart';
+import 'package:tiktok_clone/generated/l10n.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,13 +31,17 @@ class TikTokApp extends StatelessWidget {
       debugShowCheckedModeBanner: false, // debug 모드 표시를 제거해줌
       title: 'TikTok Clone',
       // Delegates: 일종의 번역 파일로 text를 이미 가지고 있는 위젯들은 flutter에서 미리 번역해 놓았음. 그걸 가져다 쓰는 것
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+      ],
       // intl 폴더 내 intl_en, intl_ko 파일로 지원 언어를 확인함
-      supportedLocales: AppLocalizations.supportedLocales,
-      /* supportedLocales: const [
+      supportedLocales: const [
         Locale("en"),
         Locale("ko"),
-      ], */
+      ],
       // themeMode: ThemeMode.light, // 기기 설정이 다크모드로 되어있어도 강제로 light모드로 실행
       // themeMode: ThemeMode.dark, // 기기 설정이 다크모드로 되어있어도 강제로 dark모드로 실행
       themeMode: ThemeMode.system, // 기기 설정에 따라 실행
