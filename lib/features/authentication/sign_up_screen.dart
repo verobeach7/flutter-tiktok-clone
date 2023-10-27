@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
@@ -29,7 +30,9 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(Localizations.localeOf(context));
+    if (kDebugMode) {
+      print(Localizations.localeOf(context));
+    }
     return OrientationBuilder(
       // Landscape, Portrait를 구분해줌
       builder: (context, orientation) {
