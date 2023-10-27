@@ -1,8 +1,9 @@
 {
+  "@@locale": "en",
   "signUpTitle": "Sign up for {nameOfTheApp}",
   "@signUpTitle": {
     "description": "The title people see when they open the app for the first time.",
-    "placeholder": {
+    "placeholders": {
       "nameOfTheApp": {
         "type": "String",
         "example": "TikTok"
@@ -12,7 +13,7 @@
   "loginTitle": "Log into your {nameOfTheApp} account",
   "@loginTitle": {
     "description": "The title people see when they open the app for the login Screen.",
-    "placeholder": {
+    "placeholders": {
       "nameOfTheApp": {
         "type": "String",
         "example": "TikTok"
@@ -23,5 +24,35 @@
   "emailPasswordButton": "Use email & password",
   "appleButton": "Continue with Apple",
   "alreadyHaveAnAccount": "Already have an account?",
-  "logIn": "Log in {gender, select, male{sir} female{madam} other{human}}"
+  "logIn": "Log in {gender, select, male{sir} female{madam} other{human}}",
+  "likeCount": "{value}",
+  "@likeCount": {
+    "description": "Anything you want",
+    "placeholders": {
+      "value": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+  "commentCount": "{value}",
+  "@commentCount": {
+    "description": "Anything you want",
+    "placeholders": {
+      "value": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+  "commentAppBarTitle": "{value} {value2, plural, =1{comment} other{comments}}",
+  "@commentAppBarTitle": {
+    "description": "Anything you want",
+    "placeholders": {
+      "value": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  }
 }
