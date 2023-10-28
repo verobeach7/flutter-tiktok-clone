@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-import 'package:tiktok_clone/features/authentication/email_screen.dart';
-import 'package:tiktok_clone/features/authentication/login_screen.dart';
-import 'package:tiktok_clone/features/authentication/sign_up_screen.dart';
-import 'package:tiktok_clone/features/authentication/username_screen.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
+import 'package:tiktok_clone/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +20,8 @@ void main() async {
     SystemUiOverlayStyle.dark,
   );
 
+  GoRouter.optionURLReflectsImperativeAPIs = true;
+
   runApp(const TikTokApp());
 }
 
@@ -31,7 +31,8 @@ class TikTokApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // S.load(const Locale("en"));
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: router,
       debugShowCheckedModeBanner: false, // debug 모드 표시를 제거해줌
       title: 'TikTok Clone',
       // Delegates: 일종의 번역 파일로 text를 이미 가지고 있는 위젯들은 flutter에서 미리 번역해 놓았음. 그걸 가져다 쓰는 것
@@ -124,16 +125,6 @@ class TikTokApp extends StatelessWidget {
           color: Colors.grey.shade900,
         ), */
       ),
-      // home: const SignUpScreen(),
-      // initialRoute: "/",
-      initialRoute: SignUpScreen.routeName,
-      routes: {
-        // "/": (context) => const SignUpScreen(),
-        SignUpScreen.routeName: (context) => const SignUpScreen(),
-        UsernameScreen.routeName: (context) => const UsernameScreen(),
-        LoginScreen.routeName: (context) => const LoginScreen(),
-        EmailScreen.routeName: (context) => const EmailScreen()
-      },
     );
   }
 }
