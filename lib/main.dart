@@ -20,6 +20,7 @@ void main() async {
     SystemUiOverlayStyle.dark,
   );
 
+  // context.push로 이동시 url이 변경되기를 원하는 경우 다음과 같이 설정
   GoRouter.optionURLReflectsImperativeAPIs = true;
 
   runApp(const TikTokApp());
