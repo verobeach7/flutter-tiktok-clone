@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
@@ -52,6 +53,31 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
       _hasPermission = true;
       await initCamera();
       setState(() {});
+    } else {
+      if (!mounted) return;
+
+      showCupertinoDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: const Text("Permissions warning!"),
+          content:
+              const Text("Please, allow the permissions in your settings."),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("No"),
+            ),
+            CupertinoDialogAction(
+              onPressed: () {
+                Navigator.of(context).pop();
+                openAppSettings();
+              },
+              isDestructiveAction: true,
+              child: const Text("Yes"),
+            ),
+          ],
+        ),
+      );
     }
   }
 
