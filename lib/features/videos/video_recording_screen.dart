@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/videos/widgets/video_flash_button.dart';
 
 class VideoRecordingScreen extends StatefulWidget {
   const VideoRecordingScreen({super.key});
@@ -16,6 +17,8 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
   bool _hasPermission = false;
 
   bool _isSelfieMode = false;
+
+  late FlashMode _flashMode;
 
   late CameraController _cameraController;
 
@@ -35,6 +38,9 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
     );
 
     await _cameraController.initialize();
+
+    // 기기의 카메라 플래시 모드 정보를 받아와서 초기화
+    _flashMode = _cameraController.value.flashMode;
   }
 
   // 1. Permissions of camera, microphone
@@ -94,6 +100,13 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
     setState(() {});
   }
 
+  // 기기에서 카메라 플래시 모드를 변경 시 적용
+  Future<void> _setFlashMode(FlashMode newFlashMode) async {
+    await _cameraController.setFlashMode(newFlashMode);
+    _flashMode = newFlashMode;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,18 +131,47 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
                 ],
               )
             : Stack(
-                alignment: Alignment.center,
+                // alignment: Alignment.center,
                 children: [
                   CameraPreview(_cameraController),
                   Positioned(
-                    top: Sizes.size20,
-                    left: Sizes.size20,
-                    child: IconButton(
-                      color: Colors.white,
-                      onPressed: _toggleSelfieMode,
-                      icon: const Icon(
-                        Icons.cameraswitch,
-                      ),
+                    top: Sizes.size40,
+                    right: Sizes.size10,
+                    child: Column(
+                      children: [
+                        IconButton(
+                          color: Colors.white,
+                          onPressed: _toggleSelfieMode,
+                          icon: const Icon(
+                            Icons.cameraswitch,
+                          ),
+                        ),
+                        Gaps.v10,
+                        VideoFlashButton(
+                          isSelected: _flashMode == FlashMode.off,
+                          icon: Icons.flash_off_rounded,
+                          onPressed: () => _setFlashMode(FlashMode.off),
+                        ),
+                        Gaps.v10,
+                        VideoFlashButton(
+                          isSelected: _flashMode == FlashMode.always,
+                          icon: Icons.flash_on_rounded,
+                          onPressed: () => _setFlashMode(FlashMode.always),
+                        ),
+                        Gaps.v10,
+                        VideoFlashButton(
+                          isSelected: _flashMode == FlashMode.auto,
+                          icon: Icons.flash_auto_rounded,
+                          onPressed: () => _setFlashMode(FlashMode.auto),
+                        ),
+                        Gaps.v10,
+                        VideoFlashButton(
+                          isSelected: _flashMode == FlashMode.torch,
+                          icon: Icons.flashlight_on_rounded,
+                          onPressed: () => _setFlashMode(FlashMode.torch),
+                        ),
+                        Gaps.v10,
+                      ],
                     ),
                   ),
                 ],
