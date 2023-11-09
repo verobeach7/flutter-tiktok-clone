@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/videos/video_preview_screen.dart';
 import 'package:tiktok_clone/features/videos/widgets/video_flash_button.dart';
 
 class VideoRecordingScreen extends StatefulWidget {
@@ -57,9 +58,15 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
     _cameraController = CameraController(
       cameras[_isSelfieMode ? 1 : 0],
       ResolutionPreset.ultraHigh,
+      // Android Emulator Error: 오디오랑 비디오를 함께 찍으면 재생 안되고 첫 프레임만 보여짐
+      // 오디오를 제거하고 녹화하여 재생 가능하게 해결해야 함
+      // enableAudio: false,
     );
 
     await _cameraController.initialize();
+
+    // iOS만을 위한 것, 가끔 영상과 오디오 싱크가 맞지 않게 되는데 이를 해결해주는 메소드임
+    await _cameraController.prepareForVideoRecording();
 
     // 기기의 카메라 플래시 모드 정보를 받아와서 초기화
     _flashMode = _cameraController.value.flashMode;
@@ -140,14 +147,39 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
     setState(() {});
   }
 
-  void _startRecording(TapDownDetails _) {
+  Future<void> _startRecording(TapDownDetails _) async {
+    // 이미 녹화 중이라면 아무것도 하지 않음
+    if (_cameraController.value.isRecordingVideo) return;
+
+    await _cameraController.startVideoRecording();
+
     _buttonAnimationController.forward();
     _progressAnimationController.forward();
   }
 
-  void _stopRecording() {
+  Future<void> _stopRecording() async {
+    // 녹화 중이 아니라면 아무것도 하지 않음
+    if (!_cameraController.value.isRecordingVideo) return;
+
     _buttonAnimationController.reverse();
     _progressAnimationController.reset();
+
+    final video = await _cameraController.stopVideoRecording();
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VideoPreviewScreen(video: video),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _progressAnimationController.dispose();
+    _buttonAnimationController.dispose();
+    _cameraController.dispose();
+    super.dispose();
   }
 
   @override
