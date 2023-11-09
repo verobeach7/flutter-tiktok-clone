@@ -13,13 +13,35 @@ class VideoRecordingScreen extends StatefulWidget {
   State<VideoRecordingScreen> createState() => _VideoRecordingScreenState();
 }
 
-class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
+// AnimationController를 사용하기 위해서 with SingleTickerProviderStateMixin 해줘야 함
+class _VideoRecordingScreenState extends State<VideoRecordingScreen>
+    with TickerProviderStateMixin {
   bool _hasPermission = false;
 
   bool _isSelfieMode = false;
 
-  late FlashMode _flashMode;
+  // Recording Animation
+  late final AnimationController _buttonAnimationController =
+      AnimationController(
+    vsync: this,
+    duration: const Duration(
+      milliseconds: 200,
+    ),
+  );
+  late final Animation<double> _buttonAnimation = Tween(
+    begin: 1.0,
+    end: 1.3,
+  ).animate(_buttonAnimationController);
 
+  late final AnimationController _progressAnimationController =
+      AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 10),
+    lowerBound: 0.0,
+    upperBound: 1.0,
+  );
+
+  late FlashMode _flashMode;
   late CameraController _cameraController;
 
   // 2. initialize cameras
@@ -91,6 +113,17 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
   void initState() {
     super.initState();
     initPermissions();
+    // controller의 변화를 감지
+    _progressAnimationController.addListener(() {
+      setState(() {});
+    });
+    // 애니메이션 상태를 파악
+    _progressAnimationController.addStatusListener((status) {
+      // controller가 애니메이션이 끝났을 때를 알려줌
+      if (status == AnimationStatus.completed) {
+        _stopRecording();
+      }
+    });
   }
 
   // 토글 버튼을 사용하면 다시 카메라를 초기화해야함. Future 사용해야 함
@@ -105,6 +138,16 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
     await _cameraController.setFlashMode(newFlashMode);
     _flashMode = newFlashMode;
     setState(() {});
+  }
+
+  void _startRecording(TapDownDetails _) {
+    _buttonAnimationController.forward();
+    _progressAnimationController.forward();
+  }
+
+  void _stopRecording() {
+    _buttonAnimationController.reverse();
+    _progressAnimationController.reset();
   }
 
   @override
@@ -131,11 +174,11 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
                 ],
               )
             : Stack(
-                // alignment: Alignment.center,
+                alignment: Alignment.center,
                 children: [
                   CameraPreview(_cameraController),
                   Positioned(
-                    top: Sizes.size40,
+                    top: Sizes.size80 + Sizes.size8,
                     right: Sizes.size10,
                     child: Column(
                       children: [
@@ -172,6 +215,39 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
                         ),
                         Gaps.v10,
                       ],
+                    ),
+                  ),
+                  Positioned(
+                    bottom: Sizes.size96,
+                    child: GestureDetector(
+                      onTapDown: _startRecording,
+                      onTapUp: (details) => _stopRecording(),
+                      onLongPressEnd: (details) => _stopRecording(),
+                      child: ScaleTransition(
+                        scale: _buttonAnimation,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            SizedBox(
+                              width: Sizes.size80 + Sizes.size10,
+                              height: Sizes.size80 + Sizes.size10,
+                              child: CircularProgressIndicator(
+                                color: Colors.red.shade400,
+                                strokeWidth: Sizes.size6,
+                                value: _progressAnimationController.value,
+                              ),
+                            ),
+                            Container(
+                              width: Sizes.size80,
+                              height: Sizes.size80,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.red.shade400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],
