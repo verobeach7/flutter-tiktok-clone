@@ -18,7 +18,7 @@ class VideoRecordingScreen extends StatefulWidget {
 
 // AnimationController를 사용하기 위해서 with SingleTickerProviderStateMixin 해줘야 함
 class _VideoRecordingScreenState extends State<VideoRecordingScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   bool _hasPermission = false;
 
   bool _isSelfieMode = false;
@@ -47,6 +47,46 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
   late FlashMode _flashMode;
   late CameraController _cameraController;
 
+  @override
+  void initState() {
+    super.initState();
+    initPermissions();
+    WidgetsBinding.instance.addObserver(this);
+    // controller의 변화를 감지
+    _progressAnimationController.addListener(() {
+      setState(() {});
+    });
+    // 애니메이션 상태를 파악
+    _progressAnimationController.addStatusListener((status) {
+      // controller가 애니메이션이 끝났을 때를 알려줌
+      if (status == AnimationStatus.completed) {
+        _stopRecording();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _progressAnimationController.dispose();
+    _buttonAnimationController.dispose();
+    _cameraController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // 앱을 처음 설치하고 권한을 물을 때 권한 창이 뜨는 것을 inactive state로 판단하게 되며
+    // 이때 cameraController가 없는 상태이기 때문에 충돌이 발생함
+    if (!_hasPermission) return;
+    if (!_cameraController.value.isInitialized) return;
+    if (state == AppLifecycleState.inactive) {
+      _cameraController.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      initCamera();
+      setState(() {});
+    }
+  }
+
   // 2. initialize cameras
   Future<void> initCamera() async {
     final cameras = await availableCameras();
@@ -72,6 +112,10 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
 
     // 기기의 카메라 플래시 모드 정보를 받아와서 초기화
     _flashMode = _cameraController.value.flashMode;
+
+    // didChangeAppLifecycleState(AppLifecycleState state)에서 initCamera를 호출할 때
+    // async-await Future<void>를 이용해야 하는 것을 피하기 위해 initCamera 안에서 setState 사용
+    setState(() {});
   }
 
   // 1. Permissions of camera, microphone
@@ -116,23 +160,6 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
         ),
       );
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initPermissions();
-    // controller의 변화를 감지
-    _progressAnimationController.addListener(() {
-      setState(() {});
-    });
-    // 애니메이션 상태를 파악
-    _progressAnimationController.addStatusListener((status) {
-      // controller가 애니메이션이 끝났을 때를 알려줌
-      if (status == AnimationStatus.completed) {
-        _stopRecording();
-      }
-    });
   }
 
   // 토글 버튼을 사용하면 다시 카메라를 초기화해야함. Future 사용해야 함
@@ -200,14 +227,6 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _progressAnimationController.dispose();
-    _buttonAnimationController.dispose();
-    _cameraController.dispose();
-    super.dispose();
   }
 
   @override
