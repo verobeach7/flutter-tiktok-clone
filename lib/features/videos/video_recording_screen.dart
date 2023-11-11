@@ -25,6 +25,8 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
 
   bool _appActivated = false;
 
+  late double _maxZoomLevel, _minZoomLevel, _currentZoomLevel;
+
   // Recording Animation
   late final AnimationController _buttonAnimationController =
       AnimationController(
@@ -121,6 +123,10 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
     // 기기의 카메라 플래시 모드 정보를 받아와서 초기화
     _flashMode = _cameraController.value.flashMode;
 
+    _maxZoomLevel = await _cameraController.getMaxZoomLevel();
+    _minZoomLevel = await _cameraController.getMinZoomLevel();
+    _currentZoomLevel = _minZoomLevel;
+
     _appActivated = true;
 
     // didChangeAppLifecycleState(AppLifecycleState state)에서 initCamera를 호출할 때
@@ -207,6 +213,7 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
 
     // 아래 문제를 해결하기 위해서 마운트 되어있지 않으면 아무것도 하지 않음
     if (!mounted) return;
+
     // async 환경에서 context를 사용하면 문제가 생김
     Navigator.push(
       context,
@@ -237,6 +244,26 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
         ),
       ),
     );
+  }
+
+  Future<void> _onVerticalDragUpdate(DragUpdateDetails details) async {
+    final dy = details.delta.dy;
+    if (dy < 0 && _currentZoomLevel >= _maxZoomLevel ||
+        dy > 0 && _currentZoomLevel <= _minZoomLevel) {
+      return;
+    }
+
+    if (dy < 0 && _currentZoomLevel < _maxZoomLevel) {
+      _currentZoomLevel -= (dy / 100);
+    }
+    if (dy > 0 && _currentZoomLevel > _minZoomLevel) {
+      _currentZoomLevel -= (dy / 100);
+    }
+
+    _currentZoomLevel = _currentZoomLevel.clamp(_minZoomLevel, _maxZoomLevel);
+    await _cameraController.setZoomLevel(_currentZoomLevel);
+
+    setState(() {});
   }
 
   @override
@@ -315,7 +342,9 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
                         GestureDetector(
                           onTapDown: _startRecording,
                           onTapUp: (details) => _stopRecording(),
-                          onLongPressEnd: (details) => _stopRecording(),
+                          // onLongPressEnd: (details) => _stopRecording(),
+                          onVerticalDragUpdate: _onVerticalDragUpdate,
+                          onVerticalDragEnd: (details) => _stopRecording(),
                           child: ScaleTransition(
                             scale: _buttonAnimation,
                             child: Stack(

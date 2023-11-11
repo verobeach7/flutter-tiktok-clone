@@ -9,12 +9,12 @@ import 'package:video_player/video_player.dart';
 class VideoPreviewScreen extends StatefulWidget {
   // XFile Class
   final XFile video;
-  final isPicked;
+  final bool isPicked;
 
   const VideoPreviewScreen({
     super.key,
     required this.video,
-    this.isPicked,
+    required this.isPicked,
   });
 
   @override
