@@ -23,6 +23,8 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
 
   bool _isSelfieMode = false;
 
+  bool _appActivated = false;
+
   // Recording Animation
   late final AnimationController _buttonAnimationController =
       AnimationController(
@@ -31,6 +33,7 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
       milliseconds: 200,
     ),
   );
+
   late final Animation<double> _buttonAnimation = Tween(
     begin: 1.0,
     end: 1.3,
@@ -77,9 +80,14 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // 앱을 처음 설치하고 권한을 물을 때 권한 창이 뜨는 것을 inactive state로 판단하게 되며
     // 이때 cameraController가 없는 상태이기 때문에 충돌이 발생함
-    if (!_hasPermission) return;
-    if (!_cameraController.value.isInitialized) return;
-    if (state == AppLifecycleState.inactive) {
+    if (!_hasPermission || !_cameraController.value.isInitialized) return;
+
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      _appActivated = false;
+      setState(() {});
+
       _cameraController.dispose();
     } else if (state == AppLifecycleState.resumed) {
       initCamera();
@@ -112,6 +120,8 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
 
     // 기기의 카메라 플래시 모드 정보를 받아와서 초기화
     _flashMode = _cameraController.value.flashMode;
+
+    _appActivated = true;
 
     // didChangeAppLifecycleState(AppLifecycleState state)에서 initCamera를 호출할 때
     // async-await Future<void>를 이용해야 하는 것을 피하기 위해 initCamera 안에서 setState 사용
@@ -255,7 +265,7 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
             : Stack(
                 alignment: Alignment.center,
                 children: [
-                  CameraPreview(_cameraController),
+                  if (_appActivated) CameraPreview(_cameraController),
                   Positioned(
                     top: Sizes.size80 + Sizes.size8,
                     right: Sizes.size10,
