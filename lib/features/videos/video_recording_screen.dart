@@ -214,6 +214,8 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
     // 아래 문제를 해결하기 위해서 마운트 되어있지 않으면 아무것도 하지 않음
     if (!mounted) return;
 
+    initCamera();
+
     // async 환경에서 context를 사용하면 문제가 생김
     Navigator.push(
       context,
