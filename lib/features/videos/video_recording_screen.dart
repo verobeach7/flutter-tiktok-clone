@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,6 +27,9 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
   bool _isSelfieMode = false;
 
   bool _appActivated = false;
+
+  // for iOS simulator, 핸드폰도 똑같이 막힘, 폰에서 할 때는 삭제
+  late final bool _noCamera = kDebugMode && Platform.isIOS;
 
   late double _maxZoomLevel, _minZoomLevel, _currentZoomLevel;
 
@@ -55,8 +61,17 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
   @override
   void initState() {
     super.initState();
-    initPermissions();
+
+    // for iOS simulator, 핸드폰도 똑같이 막힘, 폰에서 할 때는 삭제
+    // initPermissions();
+    if (!_noCamera) {
+      initPermissions();
+    } else {
+      _hasPermission = true;
+    }
+
     WidgetsBinding.instance.addObserver(this);
+
     // controller의 변화를 감지
     _progressAnimationController.addListener(() {
       setState(() {});
@@ -275,7 +290,7 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        child: !_hasPermission || !_cameraController.value.isInitialized
+        child: !_hasPermission
             ? const Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -294,47 +309,51 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
             : Stack(
                 alignment: Alignment.center,
                 children: [
-                  if (_appActivated) CameraPreview(_cameraController),
-                  Positioned(
-                    top: Sizes.size80 + Sizes.size8,
-                    right: Sizes.size10,
-                    child: Column(
-                      children: [
-                        IconButton(
-                          color: Colors.white,
-                          onPressed: _toggleSelfieMode,
-                          icon: const Icon(
-                            Icons.cameraswitch,
+                  if (_appActivated &&
+                      !_noCamera &&
+                      _cameraController.value.isInitialized)
+                    CameraPreview(_cameraController),
+                  if (!_noCamera)
+                    Positioned(
+                      top: Sizes.size80 + Sizes.size8,
+                      right: Sizes.size10,
+                      child: Column(
+                        children: [
+                          IconButton(
+                            color: Colors.white,
+                            onPressed: _toggleSelfieMode,
+                            icon: const Icon(
+                              Icons.cameraswitch,
+                            ),
                           ),
-                        ),
-                        Gaps.v10,
-                        VideoFlashButton(
-                          isSelected: _flashMode == FlashMode.off,
-                          icon: Icons.flash_off_rounded,
-                          onPressed: () => _setFlashMode(FlashMode.off),
-                        ),
-                        Gaps.v10,
-                        VideoFlashButton(
-                          isSelected: _flashMode == FlashMode.always,
-                          icon: Icons.flash_on_rounded,
-                          onPressed: () => _setFlashMode(FlashMode.always),
-                        ),
-                        Gaps.v10,
-                        VideoFlashButton(
-                          isSelected: _flashMode == FlashMode.auto,
-                          icon: Icons.flash_auto_rounded,
-                          onPressed: () => _setFlashMode(FlashMode.auto),
-                        ),
-                        Gaps.v10,
-                        VideoFlashButton(
-                          isSelected: _flashMode == FlashMode.torch,
-                          icon: Icons.flashlight_on_rounded,
-                          onPressed: () => _setFlashMode(FlashMode.torch),
-                        ),
-                        Gaps.v10,
-                      ],
+                          Gaps.v10,
+                          VideoFlashButton(
+                            isSelected: _flashMode == FlashMode.off,
+                            icon: Icons.flash_off_rounded,
+                            onPressed: () => _setFlashMode(FlashMode.off),
+                          ),
+                          Gaps.v10,
+                          VideoFlashButton(
+                            isSelected: _flashMode == FlashMode.always,
+                            icon: Icons.flash_on_rounded,
+                            onPressed: () => _setFlashMode(FlashMode.always),
+                          ),
+                          Gaps.v10,
+                          VideoFlashButton(
+                            isSelected: _flashMode == FlashMode.auto,
+                            icon: Icons.flash_auto_rounded,
+                            onPressed: () => _setFlashMode(FlashMode.auto),
+                          ),
+                          Gaps.v10,
+                          VideoFlashButton(
+                            isSelected: _flashMode == FlashMode.torch,
+                            icon: Icons.flashlight_on_rounded,
+                            onPressed: () => _setFlashMode(FlashMode.torch),
+                          ),
+                          Gaps.v10,
+                        ],
+                      ),
                     ),
-                  ),
                   Positioned(
                     bottom: Sizes.size96,
                     width: MediaQuery.of(context).size.width,
