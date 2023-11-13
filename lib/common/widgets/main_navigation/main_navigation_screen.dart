@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/discover/discover_screen.dart';
@@ -26,11 +27,29 @@ class MainNavigationScreen extends StatefulWidget {
 }
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
-  int _selectedIndex = 0;
+  final List<String> _tabs = [
+    "home",
+    "discover",
+    "xxxx", // fake item(for video post)
+    "inbox",
+    "profile",
+  ];
+
+  // The instance member '_tabs' can't be accessed in an initializer.
+  // late를 이용하여 해결
+  late int _selectedIndex = _tabs.indexOf(widget.tab);
 
   bool _isTabDown = false;
 
+  void _checkSelectedIndex() {
+    if (_selectedIndex != _tabs.indexOf(widget.tab)) {
+      _selectedIndex = _tabs.indexOf(widget.tab);
+      setState(() {});
+    }
+  }
+
   void _onTap(int index) {
+    context.go("/${_tabs[index]}");
     setState(() {
       _selectedIndex = index;
     });
@@ -78,6 +97,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // web에서 url parameter를 이용하여 home, discover, inbox, profile로 이동하는 경우 바뀐 index를 인식하여 보여주는 위젯을 변경
+    if (kIsWeb) _checkSelectedIndex();
     final isDark = isDarkMode(context);
     return Scaffold(
       resizeToAvoidBottomInset:
