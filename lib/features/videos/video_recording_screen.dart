@@ -92,7 +92,9 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
   void dispose() {
     _progressAnimationController.dispose();
     _buttonAnimationController.dispose();
-    _cameraController.dispose();
+    if (!_noCamera) {
+      _cameraController.dispose();
+    }
     super.dispose();
   }
 
@@ -100,7 +102,11 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // 앱을 처음 설치하고 권한을 물을 때 권한 창이 뜨는 것을 inactive state로 판단하게 되며
     // 이때 cameraController가 없는 상태이기 때문에 충돌이 발생함
-    if (!_hasPermission || !_cameraController.value.isInitialized) return;
+    // 순서가 중요함!!!!!! 카메라가 없는 경우 초기화 된 것도 없기 때문에 초기화 여부 자체를 확인하려고 하면 안됨
+    // 즉 _noCamera가 제일 먼저 와야함
+    if (_noCamera) return;
+    if (!_hasPermission) return;
+    if (!_cameraController.value.isInitialized) return;
 
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused ||
@@ -316,6 +322,13 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
                       !_noCamera &&
                       _cameraController.value.isInitialized)
                     CameraPreview(_cameraController),
+                  const Positioned(
+                    top: Sizes.size32,
+                    left: Sizes.size20,
+                    child: CloseButton(
+                      color: Colors.white,
+                    ),
+                  ),
                   if (!_noCamera)
                     Positioned(
                       top: Sizes.size80 + Sizes.size8,
