@@ -64,27 +64,18 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     setState(() {
       _isTabDown = true;
     });
-    if (kDebugMode) {
-      print("Down: true");
-    }
   }
 
   void _onPostVideoButtonTapCancel() {
     setState(() {
       _isTabDown = false;
     });
-    if (kDebugMode) {
-      print("Cancel: false");
-    }
   }
 
   void _onPostVideoButtonTapUp() {
     setState(() {
       _isTabDown = false;
     });
-    if (kDebugMode) {
-      print("Up: false");
-    }
   }
 
   @override
