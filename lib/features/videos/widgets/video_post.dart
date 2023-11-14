@@ -185,7 +185,7 @@ class _VideoPostState extends State<VideoPost>
             top: 60,
             right: 20,
             child: GestureDetector(
-              onTap: _onVolumeTap,
+              onTap: VideoConfigData.of(context).toggleMuted,
               child: Container(
                 height: 30,
                 width: 30,
@@ -194,7 +194,7 @@ class _VideoPostState extends State<VideoPost>
                   shape: BoxShape.circle,
                   color: Colors.grey,
                 ),
-                child: VideoConfig.of(context).autoMute
+                child: VideoConfigData.of(context).autoMute
                     ? const FaIcon(
                         FontAwesomeIcons.volumeOff,
                         color: Colors.white,
