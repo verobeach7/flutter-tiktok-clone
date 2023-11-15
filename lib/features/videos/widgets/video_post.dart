@@ -37,6 +37,8 @@ class _VideoPostState extends State<VideoPost>
 
   bool _isMuted = false;
 
+  bool _autoMute = videoConfig.autoMute;
+
   bool _isEllipsis = true;
 
   // 시간이 소요되므로 비동기 작업 필요 async-await
@@ -66,6 +68,12 @@ class _VideoPostState extends State<VideoPost>
       value: 1.5,
       duration: _animationDuration,
     );
+
+    videoConfig.addListener(() {
+      setState(() {
+        _autoMute = videoConfig.autoMute;
+      });
+    });
   }
 
   // dispose 시켜주지 않으면 리소스 낭비로 메모리가 부족해 뻗음
@@ -185,7 +193,7 @@ class _VideoPostState extends State<VideoPost>
             top: 60,
             right: 20,
             child: GestureDetector(
-              onTap: VideoConfigData.of(context).toggleMuted,
+              onTap: videoConfig.toggleAutoMute,
               child: Container(
                 height: 30,
                 width: 30,
@@ -194,7 +202,7 @@ class _VideoPostState extends State<VideoPost>
                   shape: BoxShape.circle,
                   color: Colors.grey,
                 ),
-                child: VideoConfigData.of(context).autoMute
+                child: _autoMute
                     ? const FaIcon(
                         FontAwesomeIcons.volumeOff,
                         color: Colors.white,
