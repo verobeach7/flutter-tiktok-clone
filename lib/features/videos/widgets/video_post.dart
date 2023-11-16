@@ -37,7 +37,7 @@ class _VideoPostState extends State<VideoPost>
 
   bool _isMuted = false;
 
-  bool _autoMute = videoConfig.autoMute;
+  bool _autoMute = videoConfig.value;
 
   bool _isEllipsis = true;
 
@@ -71,7 +71,7 @@ class _VideoPostState extends State<VideoPost>
 
     videoConfig.addListener(() {
       setState(() {
-        _autoMute = videoConfig.autoMute;
+        _autoMute = videoConfig.value;
       });
     });
   }
@@ -193,7 +193,9 @@ class _VideoPostState extends State<VideoPost>
             top: 60,
             right: 20,
             child: GestureDetector(
-              onTap: videoConfig.toggleAutoMute,
+              onTap: () {
+                videoConfig.value = !videoConfig.value;
+              },
               child: Container(
                 height: 30,
                 width: 30,
