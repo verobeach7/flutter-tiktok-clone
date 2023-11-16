@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tiktok_clone/common/widgets/dark_mode_config/dark_mode_config.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/discover/discover_screen.dart';
@@ -11,7 +12,6 @@ import 'package:tiktok_clone/common/widgets/main_navigation/widgets/post_video_b
 import 'package:tiktok_clone/features/users/user_profile_screen.dart';
 import 'package:tiktok_clone/features/videos/video_recording_screen.dart';
 import 'package:tiktok_clone/features/videos/video_timeline_screen.dart';
-import 'package:tiktok_clone/utils.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   static const String routeName = "mainNavigation";
@@ -82,7 +82,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   Widget build(BuildContext context) {
     // web에서 url parameter를 이용하여 home, discover, inbox, profile로 이동하는 경우 바뀐 index를 인식하여 보여주는 위젯을 변경
     if (kIsWeb) _checkSelectedIndex();
-    final isDark = isDarkMode(context);
+    final isDark = darkModeConfig.value;
     return Scaffold(
       resizeToAvoidBottomInset:
           false, // 키보드가 올라올 때 body(video_timeline_screen>video_post)가 찌그러지는 것을 막아줌

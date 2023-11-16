@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/common/widgets/dark_mode_config/dark_mode_config.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
-import 'package:tiktok_clone/utils.dart';
 
 class NavTab extends StatelessWidget {
   const NavTab({
@@ -23,7 +23,7 @@ class NavTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = isDarkMode(context);
+    final isDark = darkModeConfig.value;
     // Expanded: 터치 공간을 최대한 늘려주기 위해서 최대한 확장함
     return Expanded(
       child: GestureDetector(

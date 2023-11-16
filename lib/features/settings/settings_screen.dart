@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/common/widgets/dark_mode_config/dark_mode_config.dart';
 import 'package:tiktok_clone/common/widgets/video_config/video_config.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 
@@ -35,6 +36,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           child: ListView(
             children: [
+              ValueListenableBuilder(
+                valueListenable: darkModeConfig,
+                builder: (context, value, child) => SwitchListTile.adaptive(
+                  value: value,
+                  onChanged: (value) {
+                    darkModeConfig.value = !darkModeConfig.value;
+                  },
+                  title: const Text(
+                    "Dark Mode",
+                  ),
+                  subtitle: const Text("The app turns dark mode on."),
+                ),
+              ),
               ValueListenableBuilder(
                 valueListenable: videoConfig,
                 builder: (context, value, child) => SwitchListTile.adaptive(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tiktok_clone/common/widgets/dark_mode_config/dark_mode_config.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
 import 'package:tiktok_clone/router.dart';
@@ -26,8 +27,26 @@ void main() async {
   runApp(const TikTokApp());
 }
 
-class TikTokApp extends StatelessWidget {
+class TikTokApp extends StatefulWidget {
   const TikTokApp({super.key});
+
+  @override
+  State<TikTokApp> createState() => _TikTokAppState();
+}
+
+class _TikTokAppState extends State<TikTokApp> {
+  bool _isDarkMode = darkModeConfig.value;
+
+  @override
+  void initState() {
+    super.initState();
+
+    darkModeConfig.addListener(() {
+      setState(() {
+        _isDarkMode = darkModeConfig.value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +69,7 @@ class TikTokApp extends StatelessWidget {
       ],
       // themeMode: ThemeMode.light, // 기기 설정이 다크모드로 되어있어도 강제로 light모드로 실행
       // themeMode: ThemeMode.dark, // 기기 설정이 다크모드로 되어있어도 강제로 dark모드로 실행
-      themeMode: ThemeMode.system, // 기기 설정에 따라 실행
+      themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light, // 기기 설정에 따라 실행
       theme: ThemeData(
         useMaterial3: true,
         textTheme: Typography.blackMountainView,
