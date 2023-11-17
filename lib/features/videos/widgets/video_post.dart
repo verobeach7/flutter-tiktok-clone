@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:tiktok_clone/common/widgets/video_config/video_config.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
@@ -37,8 +38,6 @@ class _VideoPostState extends State<VideoPost>
 
   bool _isMuted = false;
 
-  bool _autoMute = videoConfig.value;
-
   bool _isEllipsis = true;
 
   // 시간이 소요되므로 비동기 작업 필요 async-await
@@ -68,12 +67,6 @@ class _VideoPostState extends State<VideoPost>
       value: 1.5,
       duration: _animationDuration,
     );
-
-    videoConfig.addListener(() {
-      setState(() {
-        _autoMute = videoConfig.value;
-      });
-    });
   }
 
   // dispose 시켜주지 않으면 리소스 낭비로 메모리가 부족해 뻗음
@@ -194,7 +187,7 @@ class _VideoPostState extends State<VideoPost>
             right: 20,
             child: GestureDetector(
               onTap: () {
-                videoConfig.value = !videoConfig.value;
+                context.read<VideoConfig>().toggleIsMuted();
               },
               child: Container(
                 height: 30,
@@ -204,7 +197,7 @@ class _VideoPostState extends State<VideoPost>
                   shape: BoxShape.circle,
                   color: Colors.grey,
                 ),
-                child: _autoMute
+                child: context.watch<VideoConfig>().isMuted
                     ? const FaIcon(
                         FontAwesomeIcons.volumeOff,
                         color: Colors.white,
