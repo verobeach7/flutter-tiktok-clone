@@ -1,14 +1,14 @@
 // 데이터를 디스크에 persist하고 디스크에서 데이터를 가져오는 일만 함
 import 'package:shared_preferences/shared_preferences.dart';
 
-class VideoPlaybackConfigRepository {
+class PlaybackConfigRepository {
   // key값으로 사용될 때 타이핑 오류를 방지하기 위해 static const로 상수 지정
   static const String _autoplay = "autoplay";
   static const String _muted = "muted";
 
   final SharedPreferences _preferences;
 
-  VideoPlaybackConfigRepository(this._preferences);
+  PlaybackConfigRepository(this._preferences);
 
   // 1. 음소거 관련 데이터를 디스크에 저장하는 메소드
   Future<void> setMuted(bool value) async {

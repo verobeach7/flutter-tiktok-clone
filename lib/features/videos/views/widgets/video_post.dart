@@ -184,9 +184,7 @@ class _VideoPostState extends State<VideoPost>
             top: 60,
             right: 20,
             child: GestureDetector(
-              onTap: () {
-                context.read<VideoConfig>().toggleIsMuted();
-              },
+              onTap: () {},
               child: Container(
                 height: 30,
                 width: 30,
@@ -195,7 +193,7 @@ class _VideoPostState extends State<VideoPost>
                   shape: BoxShape.circle,
                   color: Colors.grey,
                 ),
-                child: context.watch<VideoConfig>().isMuted
+                child: false
                     ? const FaIcon(
                         FontAwesomeIcons.volumeOff,
                         color: Colors.white,

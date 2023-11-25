@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:tiktok_clone/common/widgets/dark_mode_config/dark_mode_config.dart';
 import 'package:tiktok_clone/common/widgets/video_config/video_config.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
+import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -51,14 +52,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               SwitchListTile.adaptive(
-                value: context.watch<VideoConfig>().isMuted,
+                value: context.watch<PlaybackConfigViewModel>().muted,
                 onChanged: (value) =>
-                    context.read<VideoConfig>().toggleIsMuted(),
+                    context.read<PlaybackConfigViewModel>().setMuted(value),
                 title: const Text(
-                  "Auto Mute",
+                  "Mute video",
                 ),
-                subtitle: const Text("Videos muted by default."),
+                subtitle: const Text("Video will be muted by default."),
               ),
+              SwitchListTile.adaptive(
+                value: context.watch<PlaybackConfigViewModel>().autoplay,
+                onChanged: (value) =>
+                    context.read<PlaybackConfigViewModel>().setAutoplay(value),
+                title: const Text(
+                  "Autoplay",
+                ),
+                subtitle: const Text("Video will start playing automatically."),
+              ),
+
               // SwitchListTile 사용을 추천!!!
               SwitchListTile.adaptive(
                 value: _notifications,
