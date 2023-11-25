@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:tiktok_clone/common/widgets/video_config/video_config.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-import 'package:tiktok_clone/features/videos/widgets/video_button.dart';
-import 'package:tiktok_clone/features/videos/widgets/video_comments.dart';
+import 'package:tiktok_clone/features/videos/views/widgets/video_button.dart';
+import 'package:tiktok_clone/features/videos/views/widgets/video_comments.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -48,9 +48,7 @@ class _VideoPostState extends State<VideoPost>
       await _videoPlayerController.setVolume(0);
       _isMuted = true;
     }
-    // video가 끝나는 시점을 알려주기 위해서 다음 과정 필요
-    // addListener가 영상이 바뀌는 시간, 길이, 끝나는 시간 등을 모두 알려줄 수 있음
-    // _videoPlayerController.addListener(_onVideoChange);
+
     setState(() {});
   }
 
