@@ -36,9 +36,9 @@ class _VideoPostState extends State<VideoPost>
 
   late final AnimationController _animationController;
 
-  late bool _isPaused = !context.read<PlaybackConfigViewModel>().autoplay;
+  late bool _isPaused = !false; // 나중에 수정
 
-  late bool _isMuted = context.read<PlaybackConfigViewModel>().muted;
+  late bool _isMuted = false; // 나중에 수정
 
   bool _isEllipsis = true;
 
@@ -67,10 +67,6 @@ class _VideoPostState extends State<VideoPost>
       value: 1.5,
       duration: _animationDuration,
     );
-
-    context
-        .read<PlaybackConfigViewModel>()
-        .addListener(_onPlaybackConfigChanged);
   }
 
   // dispose 시켜주지 않으면 리소스 낭비로 메모리가 부족해 뻗음
@@ -82,9 +78,8 @@ class _VideoPostState extends State<VideoPost>
 
   void _onPlaybackConfigChanged() {
     if (!mounted) return;
-    final muted = context.read<PlaybackConfigViewModel>().muted;
-    _isMuted = muted;
-    if (muted) {
+    _isMuted = false; // 나중에 수정 필요
+    if (false) {
       _videoPlayerController.setVolume(0);
     } else {
       _videoPlayerController.setVolume(1);
@@ -98,8 +93,7 @@ class _VideoPostState extends State<VideoPost>
     if (info.visibleFraction == 1 &&
         !_isPaused && // 이 조건이 없으면 일시정지 상태에서 새로고침을 했을 때 Bug가 발생함
         !_videoPlayerController.value.isPlaying) {
-      final autoplay = context.read<PlaybackConfigViewModel>().autoplay;
-      if (autoplay) {
+      if (false) {
         _videoPlayerController.play();
       }
     }

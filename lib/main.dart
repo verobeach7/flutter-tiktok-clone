@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,14 +37,12 @@ void main() async {
   final repository = PlaybackConfigRepository(preferences);
 
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => PlaybackConfigViewModel(repository),
-        )
-      ],
-      child: const TikTokApp(),
-    ),
+    // 앱이 시작되기 전에 override하기 위한 장치
+    ProviderScope(overrides: [
+      PlaybackConfigProvider.overrideWith(
+        () => PlaybackConfigViewModel(repository),
+      ),
+    ], child: const TikTokApp()),
   );
 }
 
