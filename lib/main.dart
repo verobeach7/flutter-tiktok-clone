@@ -39,6 +39,7 @@ void main() async {
   runApp(
     // 앱이 시작되기 전에 override하기 위한 장치
     ProviderScope(overrides: [
+      // PlaybackConfigProvider에서 에러가 발생하기 전에 override해줌으로써 해결
       PlaybackConfigProvider.overrideWith(
         () => PlaybackConfigViewModel(repository),
       ),

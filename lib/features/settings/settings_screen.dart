@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktok_clone/common/widgets/dark_mode_config/dark_mode_config.dart';
@@ -8,25 +9,13 @@ import 'package:tiktok_clone/common/widgets/dark_mode_config/dark_mode_config.da
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 
-class SettingsScreen extends StatefulWidget {
+// Statefulwidget을 한 이유는 _notifications를 state하기 위함이었음
+// StatelessWidget으로 변경한 후 ConsumerWidget으로 다시 변경하여 Refactoring
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool _notifications = false;
-
-  void _onNotificationChanged(bool? newValue) {
-    if (newValue == null) return;
-    setState(() {
-      _notifications = newValue;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Settings"),
@@ -52,16 +41,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               SwitchListTile.adaptive(
-                value: false,
-                onChanged: (value) => {},
+                value: ref.watch(PlaybackConfigProvider).muted,
+                onChanged: (value) =>
+                    // .notifier를 통해 class의 메서드에 접근할 수 있음
+                    ref.read(PlaybackConfigProvider.notifier).setMuted(value),
                 title: const Text(
                   "Mute video",
                 ),
                 subtitle: const Text("Video will be muted by default."),
               ),
               SwitchListTile.adaptive(
-                value: false,
-                onChanged: (value) => {},
+                value: ref.watch(PlaybackConfigProvider).autoplay,
+                onChanged: (value) => ref
+                    .read(PlaybackConfigProvider.notifier)
+                    .setAutoplay(value),
                 title: const Text(
                   "Autoplay",
                 ),
@@ -70,8 +63,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
               // SwitchListTile 사용을 추천!!!
               SwitchListTile.adaptive(
-                value: _notifications,
-                onChanged: _onNotificationChanged,
+                value: false,
+                onChanged: (value) {},
                 title: const Text(
                   "Enable notifications",
                 ),
@@ -80,8 +73,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               CheckboxListTile(
                 activeColor: Colors.black,
                 checkColor: Colors.white,
-                value: _notifications,
-                onChanged: _onNotificationChanged,
+                value: false,
+                onChanged: (value) {},
                 title: const Text("Enable notifications"),
               ),
               ListTile(
@@ -95,7 +88,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   if (kDebugMode) {
                     print(date);
                   }
-                  if (!mounted) return;
                   final time = await showTimePicker(
                     context: context,
                     initialTime: TimeOfDay.now(),
@@ -103,7 +95,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   if (kDebugMode) {
                     print(time);
                   }
-                  if (!mounted) return;
                   final booking = await showDateRangePicker(
                     context: context,
                     firstDate: DateTime(1980),
