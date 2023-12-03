@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:tiktok_clone/common/widgets/dark_mode_config/dark_mode_config.dart';
 // import 'package:tiktok_clone/common/widgets/video_config/video_config.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
@@ -41,19 +40,19 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ),
               SwitchListTile.adaptive(
-                value: ref.watch(PlaybackConfigProvider).muted,
+                value: ref.watch(playbackConfigProvider).muted,
                 onChanged: (value) =>
                     // .notifier를 통해 class의 메서드에 접근할 수 있음
-                    ref.read(PlaybackConfigProvider.notifier).setMuted(value),
+                    ref.read(playbackConfigProvider.notifier).setMuted(value),
                 title: const Text(
                   "Mute video",
                 ),
                 subtitle: const Text("Video will be muted by default."),
               ),
               SwitchListTile.adaptive(
-                value: ref.watch(PlaybackConfigProvider).autoplay,
+                value: ref.watch(playbackConfigProvider).autoplay,
                 onChanged: (value) => ref
-                    .read(PlaybackConfigProvider.notifier)
+                    .read(playbackConfigProvider.notifier)
                     .setAutoplay(value),
                 title: const Text(
                   "Autoplay",

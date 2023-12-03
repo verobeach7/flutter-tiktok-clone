@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/features/videos/models/playback_config_model.dart';
 import 'package:tiktok_clone/features/videos/repos/playback_config_repo.dart';
@@ -35,7 +34,7 @@ class PlaybackConfigViewModel extends Notifier<PlaybackConfigModel> {
 // Type 2개를 넣어줘야 함
 // 한 개는 expose하기를 원하는 Provider, 또 한 개는 Provider가 expose 할 데이터
 // 즉, Provider는 데이터 변경 시 PlaybackConfigViewModel과 PlaybackConfigModel에 알려야 함
-final PlaybackConfigProvider =
+final playbackConfigProvider =
     NotifierProvider<PlaybackConfigViewModel, PlaybackConfigModel>(
   // PlaybackConfigViewModel을 만들 때 repository를 인수로 보내야 함
   // () => PlaybackConfigViewModel(),

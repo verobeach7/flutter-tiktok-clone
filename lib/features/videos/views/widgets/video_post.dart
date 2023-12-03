@@ -2,11 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
-// import 'package:tiktok_clone/common/widgets/video_config/video_config.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-// import 'package:tiktok_clone/features/videos/models/playback_config_model.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_button.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_comments.dart';
@@ -47,8 +44,8 @@ class VideoPostState extends ConsumerState<VideoPost>
   void _initVideoPlayer() async {
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
-    _isMuted = ref.read(PlaybackConfigProvider).muted;
-    _isPaused = !ref.read(PlaybackConfigProvider).autoplay;
+    _isMuted = ref.read(playbackConfigProvider).muted;
+    _isPaused = !ref.read(playbackConfigProvider).autoplay;
     if (kIsWeb || _isMuted) {
       await _videoPlayerController.setVolume(0);
       _isMuted = true;
@@ -98,7 +95,7 @@ class VideoPostState extends ConsumerState<VideoPost>
     if (info.visibleFraction == 1 &&
         !_isPaused && // 이 조건이 없으면 일시정지 상태에서 새로고침을 했을 때 Bug가 발생함
         !_videoPlayerController.value.isPlaying) {
-      if (ref.read(PlaybackConfigProvider).autoplay) {
+      if (ref.read(playbackConfigProvider).autoplay) {
         _videoPlayerController.play();
       }
     }
