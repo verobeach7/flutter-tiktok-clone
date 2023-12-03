@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 // import 'package:tiktok_clone/common/widgets/video_config/video_config.dart';
@@ -13,7 +14,7 @@ import 'package:tiktok_clone/generated/l10n.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class VideoPost extends StatefulWidget {
+class VideoPost extends ConsumerStatefulWidget {
   final Function onVideoFinished;
 
   final int index;
@@ -25,10 +26,10 @@ class VideoPost extends StatefulWidget {
   });
 
   @override
-  State<VideoPost> createState() => _VideoPostState();
+  VideoPostState createState() => VideoPostState();
 }
 
-class _VideoPostState extends State<VideoPost>
+class VideoPostState extends ConsumerState<VideoPost>
     with SingleTickerProviderStateMixin {
   final VideoPlayerController _videoPlayerController =
       VideoPlayerController.asset("assets/videos/IMG_2181.MOV");
@@ -36,9 +37,9 @@ class _VideoPostState extends State<VideoPost>
 
   late final AnimationController _animationController;
 
-  late bool _isPaused = !false; // 나중에 수정
+  bool _isPaused = false;
 
-  late bool _isMuted = false; // 나중에 수정
+  bool _isMuted = false;
 
   bool _isEllipsis = true;
 
@@ -46,6 +47,8 @@ class _VideoPostState extends State<VideoPost>
   void _initVideoPlayer() async {
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
+    _isMuted = ref.read(PlaybackConfigProvider).muted;
+    _isPaused = !ref.read(PlaybackConfigProvider).autoplay;
     if (kIsWeb || _isMuted) {
       await _videoPlayerController.setVolume(0);
       _isMuted = true;
@@ -76,15 +79,17 @@ class _VideoPostState extends State<VideoPost>
     super.dispose();
   }
 
-  void _onPlaybackConfigChanged() {
+  /*  void _onPlaybackConfigChanged() {
     if (!mounted) return;
-    _isMuted = false; // 나중에 수정 필요
-    if (false) {
+    // _isMuted = false; // 나중에 수정 필요
+    final muted = ref.read(PlaybackConfigProvider).muted;
+    ref.read(PlaybackConfigProvider.notifier).setMuted(!muted);
+    if (muted) {
       _videoPlayerController.setVolume(0);
     } else {
       _videoPlayerController.setVolume(1);
     }
-  }
+  } */
 
   void _onVisibilityChanged(VisibilityInfo info) {
     // 모든 stateful widget은 mounted라는 프로퍼티를 가지고 있음!
@@ -93,7 +98,7 @@ class _VideoPostState extends State<VideoPost>
     if (info.visibleFraction == 1 &&
         !_isPaused && // 이 조건이 없으면 일시정지 상태에서 새로고침을 했을 때 Bug가 발생함
         !_videoPlayerController.value.isPlaying) {
-      if (false) {
+      if (ref.read(PlaybackConfigProvider).autoplay) {
         _videoPlayerController.play();
       }
     }
