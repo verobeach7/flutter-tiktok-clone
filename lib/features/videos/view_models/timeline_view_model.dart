@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/features/videos/models/video_model.dart';
 
 class TimelineViewModel extends AsyncNotifier<List<VideoModel>> {
+  // List<VideoModel> _list = [VideoModel(title: "First video")];
   List<VideoModel> _list = [];
 
   // 업로드 버튼을 누르면 loading 상태로 변경 후, Firebase에 업로드하고, 그 후 새 데이터를 가지게 됨
