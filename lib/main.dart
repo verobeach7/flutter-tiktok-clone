@@ -5,7 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tiktok_clone/common/widgets/dark_mode_config/dark_mode_config.dart';
+// import 'package:tiktok_clone/common/widgets/dark_mode_config/dark_mode_config.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/videos/repos/playback_config_repo.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
@@ -51,34 +51,15 @@ void main() async {
   );
 }
 
-class TikTokApp extends StatefulWidget {
+// TikTokApp에서 routerProvider를 통해 watch
+class TikTokApp extends ConsumerWidget {
   const TikTokApp({super.key});
 
   @override
-  State<TikTokApp> createState() => _TikTokAppState();
-}
-
-class _TikTokAppState extends State<TikTokApp> {
-  bool _isDarkMode = darkModeConfig.value;
-
-  @override
-  void initState() {
-    super.initState();
-
-    darkModeConfig.addListener(
-      () {
-        setState(() {
-          _isDarkMode = darkModeConfig.value;
-        });
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // S.load(const Locale("en"));
     return MaterialApp.router(
-      routerConfig: router,
+      routerConfig: ref.watch(routerProvider),
       debugShowCheckedModeBanner: false, // debug 모드 표시를 제거해줌
       title: 'TikTok Clone',
       // Delegates: 일종의 번역 파일로 text를 이미 가지고 있는 위젯들은 flutter에서 미리 번역해 놓았음. 그걸 가져다 쓰는 것
@@ -95,7 +76,7 @@ class _TikTokAppState extends State<TikTokApp> {
       ],
       // themeMode: ThemeMode.light, // 기기 설정이 다크모드로 되어있어도 강제로 light모드로 실행
       // themeMode: ThemeMode.dark, // 기기 설정이 다크모드로 되어있어도 강제로 dark모드로 실행
-      themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light, // 기기 설정에 따라 실행
+      themeMode: ThemeMode.light, // 기기 설정에 따라 실행
       theme: ThemeData(
         useMaterial3: true,
         textTheme: Typography.blackMountainView,
