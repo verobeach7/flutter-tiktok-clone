@@ -3,9 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/common/widgets/dark_mode_config/dark_mode_config.dart';
 // import 'package:tiktok_clone/common/widgets/video_config/video_config.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
+import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 
 // Statefulwidget을 한 이유는 _notifications를 state하기 위함이었음
@@ -134,7 +136,10 @@ class SettingsScreen extends ConsumerWidget {
                           child: const Text("No"),
                         ),
                         CupertinoDialogAction(
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () {
+                            ref.read(authRepo).signOut();
+                            context.go("/");
+                          },
                           isDestructiveAction: true,
                           child: const Text("Yes"),
                         ),
@@ -163,7 +168,7 @@ class SettingsScreen extends ConsumerWidget {
                           icon: const FaIcon(FontAwesomeIcons.car),
                         ),
                         TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () => ref.read(authRepo).signOut(),
                           child: const Text("Yes"),
                         ),
                       ],

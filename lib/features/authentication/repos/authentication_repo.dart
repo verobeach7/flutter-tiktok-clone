@@ -7,13 +7,26 @@ class AuthenticationRepository {
   bool get isLoggedIn => user != null;
   User? get user => _firebaseAuth.currentUser;
 
-  Future<void> signUp(String email, String password) async {
+  // Function => return
+  // Notifies about changes to the user's sign-in state (such as sign-in or sign-out)
+  Stream<User?> authStateChanges() => _firebaseAuth.authStateChanges();
+
+  Future<void> emailSignUp(String email, String password) async {
     await _firebaseAuth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
   }
+
+  Future<void> signOut() async {
+    await _firebaseAuth.signOut();
+  }
 }
 
 // Provider: read-only value를 Expose함
 final authRepo = Provider((ref) => AuthenticationRepository());
+
+final authState = StreamProvider((ref) {
+  final repo = ref.read(authRepo);
+  return repo.authStateChanges();
+});
