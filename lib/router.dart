@@ -14,7 +14,7 @@ import 'package:tiktok_clone/features/videos/views/video_recording_screen.dart';
 // GoRouter를 Provider 안에 넣기
 // ref를 통해 어디서나 ref에 접근 가능
 final routerProvider = Provider((ref) {
-  ref.watch(authState);
+  // ref.watch(authState);
   return GoRouter(
     initialLocation: "/home",
     redirect: (context, state) {
