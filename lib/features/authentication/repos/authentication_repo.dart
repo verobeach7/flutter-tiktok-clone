@@ -28,6 +28,10 @@ class AuthenticationRepository {
       password: password,
     );
   }
+
+  Future<void> githubSignIn() async {
+    await _firebaseAuth.signInWithProvider(GithubAuthProvider());
+  }
 }
 
 // Provider: read-only value를 Expose함
