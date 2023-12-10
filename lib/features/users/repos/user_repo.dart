@@ -11,7 +11,13 @@ class UserRepository {
     // 7. Firestore와 연결(dart 이해 못하므로 클래스를 json으로 변환하여 전달)
     await _db.collection("users").doc(profile.uid).set(profile.toJson());
   }
+
   // get profile method
+  Future<Map<String, dynamic>?> findProfile(String uid) async {
+    final doc = await _db.collection("users").doc(uid).get();
+    return doc.data();
+  }
+
   // update avatar method
   // update bio method
   // update link method
