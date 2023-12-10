@@ -11,8 +11,9 @@ class AuthenticationRepository {
   // Notifies about changes to the user's sign-in state (such as sign-in or sign-out)
   Stream<User?> authStateChanges() => _firebaseAuth.authStateChanges();
 
-  Future<void> emailSignUp(String email, String password) async {
-    await _firebaseAuth.createUserWithEmailAndPassword(
+  Future<UserCredential> emailSignUp(String email, String password) async {
+    // 2. UserCredential을 return받음
+    return _firebaseAuth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );

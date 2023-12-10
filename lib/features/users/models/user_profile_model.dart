@@ -1,0 +1,23 @@
+class UserProfileModel {
+  final String uid;
+  final String email;
+  final String name;
+  final String bio;
+  final String link;
+
+  UserProfileModel({
+    required this.uid,
+    required this.email,
+    required this.name,
+    required this.bio,
+    required this.link,
+  });
+
+  // 유저가 앱을 처음 실행하여 가입하는 경우. 즉, 계정이 없는 경우
+  UserProfileModel.empty()
+      : uid = "",
+        email = "",
+        name = "",
+        bio = "",
+        link = "";
+}

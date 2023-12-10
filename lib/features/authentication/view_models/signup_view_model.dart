@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/onboarding/interests_screen.dart';
+import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
 import 'package:tiktok_clone/utils.dart';
 
 // SignUpViewModel에서는 아무것도 Expose하지 않을 것
@@ -21,15 +22,19 @@ class SignUpViewModel extends AsyncNotifier<void> {
   Future<void> signUp(BuildContext context) async {
     state = const AsyncValue.loading();
     final form = ref.read(signUpForm);
+    final users = ref.read(usersProvider.notifier);
     /* await _authRepo.signUp(form["email"], form["password"]);
     state = AsyncValue.data(null); */
     // guard는 에러가 있다면 에러를 state에 넣어주고 에러가 없으면 데이터를 state에 넣어줌
-    state = await AsyncValue.guard(
-      () async => await _authRepo.emailSignUp(
+    state = await AsyncValue.guard(() async {
+      // 1. 계정 생성을 위해 Authentication Repository를 호출
+      final userCredential = await _authRepo.emailSignUp(
         form["email"],
         form["password"],
-      ),
-    );
+      );
+      // 3. Return받은 userCredential을 가지고 createAccount를 호출
+      await users.createAccount(userCredential);
+    });
     if (state.hasError) {
       showFirebaseErrorSnack(context, state.error);
     } else {
