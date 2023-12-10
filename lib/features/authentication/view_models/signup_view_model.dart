@@ -32,8 +32,8 @@ class SignUpViewModel extends AsyncNotifier<void> {
         form["email"],
         form["password"],
       );
-      // 3. Return받은 userCredential을 가지고 createAccount를 호출
-      await users.createAccount(userCredential);
+      // 3. Return받은 userCredential을 가지고 createProfile를 호출
+      await users.createProfile(userCredential);
     });
     if (state.hasError) {
       showFirebaseErrorSnack(context, state.error);

@@ -7,7 +7,10 @@ class UserRepository {
 
   // create profile method
   // Model을 method의 parameter로 넣어줌
-  Future<void> createProfile(UserProfileModel user) async {}
+  Future<void> createProfile(UserProfileModel profile) async {
+    // 7. Firestore와 연결(dart 이해 못하므로 클래스를 json으로 변환하여 전달)
+    await _db.collection("users").doc(profile.uid).set(profile.toJson());
+  }
   // get profile method
   // update avatar method
   // update bio method

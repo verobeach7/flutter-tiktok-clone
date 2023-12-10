@@ -20,4 +20,15 @@ class UserProfileModel {
         name = "",
         bio = "",
         link = "";
+
+  // UserProfileModel을 json으로 만드는 메서드
+  Map<String, String> toJson() {
+    return {
+      "uid": uid,
+      "email": email,
+      "name": name,
+      "bio": bio,
+      "link": link,
+    };
+  }
 }
