@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
+import 'package:tiktok_clone/features/authentication/view_models/signup_view_model.dart';
 import 'package:tiktok_clone/features/users/models/user_profile_model.dart';
 import 'package:tiktok_clone/features/users/repos/user_repo.dart';
 
@@ -29,6 +30,8 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
 
   // 4. userCredential을 이용하여 모델을 만들어줌
   Future<void> createProfile(UserCredential credential) async {
+    final form = ref.read(signUpForm);
+
     if (credential.user == null) {
       throw Exception("Account not created.");
     }
@@ -40,7 +43,9 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
       link: "undefined",
       email: credential.user!.email ?? "anon@anon.com",
       uid: credential.user!.uid,
-      name: credential.user!.displayName ?? "Anon",
+      // name: credential.user!.displayName ?? "Anon",
+      name: credential.user!.displayName ?? form["name"],
+      birthday: form["birthday"],
     );
     // 6. User Repository의 createProfile을 호출(Firestore에 저장하기 위해)
     await _usersrepository.createProfile(profile);

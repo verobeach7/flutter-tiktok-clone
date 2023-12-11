@@ -4,6 +4,7 @@ class UserProfileModel {
   final String name;
   final String bio;
   final String link;
+  final String birthday;
 
   UserProfileModel({
     required this.uid,
@@ -11,6 +12,7 @@ class UserProfileModel {
     required this.name,
     required this.bio,
     required this.link,
+    required this.birthday,
   });
 
   // 유저가 앱을 처음 실행하여 가입하는 경우. 즉, 계정이 없는 경우
@@ -19,7 +21,8 @@ class UserProfileModel {
         email = "",
         name = "",
         bio = "",
-        link = "";
+        link = "",
+        birthday = "";
 
   // UserProfileModel을 json으로 만드는 메서드
   Map<String, String> toJson() {
@@ -29,6 +32,7 @@ class UserProfileModel {
       "name": name,
       "bio": bio,
       "link": link,
+      "birthday": birthday,
     };
   }
 
@@ -37,5 +41,6 @@ class UserProfileModel {
         email = json["email"],
         name = json["name"],
         bio = json["bio"],
-        link = json["link"];
+        link = json["link"],
+        birthday = json["birthday"];
 }
