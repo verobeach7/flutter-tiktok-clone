@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/features/users/models/user_profile_model.dart';
 
 class UserRepository {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  // Storage와 연결, reference로 작동(링크라고 보면 됨)
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   // create profile method
   // Model을 method의 parameter로 넣어줌
@@ -19,6 +24,16 @@ class UserRepository {
   }
 
   // update avatar method
+  Future<void> uploadAvatar(File file, String fileName) async {
+    // ref = reference, Returns a reference to a relative path from this reference.
+    // 1. 파일을 넣기 위한 공간을 만들고(자리 예약)
+    final fileRef = _storage.ref().child("avatar/$fileName");
+    // 2. 파일을 넣어주면 됨
+    await fileRef.putFile(file);
+    // final task = await fileRef.putFile(file);
+    // task로 받아서 pause, resume, cancel 등 다양한 것을 할 수 있음(putFile->uploadTask->Task로 들어가보면 확인 가능)
+  }
+
   // update bio method
   // update link method
 }

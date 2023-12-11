@@ -14,6 +14,8 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
   // 처음 빌드 될 때는 유저가 계정이 없으므로 .empty를 이용하여 ""로 초기화
   @override
   FutureOr<UserProfileModel> build() async {
+    await Future.delayed(const Duration(seconds: 3));
+
     _usersrepository = ref.read(userRepo);
     _authenticationRepository = ref.read(authRepo);
     // authRepo의 유저ID를 가지고 Firestore에서 프로필 정보 가져오기
