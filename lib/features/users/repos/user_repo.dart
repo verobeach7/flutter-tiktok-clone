@@ -34,6 +34,11 @@ class UserRepository {
     // task로 받아서 pause, resume, cancel 등 다양한 것을 할 수 있음(putFile->uploadTask->Task로 들어가보면 확인 가능)
   }
 
+  // 특정한 한가지만 업데이트 하는 것이 아니라 Map형식으로 보내진 데이터면 무엇이든지 업데이트 할 수 있도록 구성
+  Future<void> updateUser(String uid, Map<String, dynamic> data) async {
+    await _db.collection("users").doc(uid).update(data);
+  }
+
   // update bio method
   // update link method
 }

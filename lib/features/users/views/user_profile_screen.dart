@@ -81,7 +81,10 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                   "https://avatars.githubusercontent.com/u/60215757?v=4"),
                               child: Text(data.name),
                             ), */
-                            Avatar(name: data.name),
+                            Avatar(
+                                name: data.name,
+                                hasAvatar: data.hasAvatar,
+                                uid: data.uid),
                             Gaps.v20,
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,

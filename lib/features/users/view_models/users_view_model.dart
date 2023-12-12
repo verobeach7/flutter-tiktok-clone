@@ -8,19 +8,17 @@ import 'package:tiktok_clone/features/users/models/user_profile_model.dart';
 import 'package:tiktok_clone/features/users/repos/user_repo.dart';
 
 class UsersViewModel extends AsyncNotifier<UserProfileModel> {
-  late final UserRepository _usersrepository;
+  late final UserRepository _usersRepository;
   late final AuthenticationRepository _authenticationRepository;
 
   // 처음 빌드 될 때는 유저가 계정이 없으므로 .empty를 이용하여 ""로 초기화
   @override
   FutureOr<UserProfileModel> build() async {
-    await Future.delayed(const Duration(seconds: 3));
-
-    _usersrepository = ref.read(userRepo);
+    _usersRepository = ref.read(userRepo);
     _authenticationRepository = ref.read(authRepo);
     // authRepo의 유저ID를 가지고 Firestore에서 프로필 정보 가져오기
     if (_authenticationRepository.isLoggedIn) {
-      final profile = await _usersrepository
+      final profile = await _usersRepository
           .findProfile(_authenticationRepository.user!.uid);
       // Firestore에는 json으로 존재하므로 이를 UserProfileModel로 변환해야함
       if (profile != null) {
@@ -41,6 +39,7 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
     state = const AsyncValue.loading();
     // 5. 만들어진 모델을 state에 넣어줌
     final profile = UserProfileModel(
+      hasAvatar: false,
       bio: "undefined",
       link: "undefined",
       email: credential.user!.email ?? "anon@anon.com",
@@ -50,8 +49,17 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
       birthday: form["birthday"],
     );
     // 6. User Repository의 createProfile을 호출(Firestore에 저장하기 위해)
-    await _usersrepository.createProfile(profile);
+    await _usersRepository.createProfile(profile);
     state = AsyncValue.data(profile);
+  }
+
+  Future<void> onAvatarUpload() async {
+    // AsyncValue.loading을 사용하지 않는 이유: 사용하게 되면 아바타를 변경할 때도 프로필 화면 전체가 rebuild하게 됨
+    if (state.value == null) return;
+    // 데이터 업데이트
+    state = AsyncValue.data(state.value!.copyWith(hasAvatar: true));
+    // Firestore DB 업데이트
+    await _usersRepository.updateUser(state.value!.uid, {"hasAvatar": true});
   }
 }
 

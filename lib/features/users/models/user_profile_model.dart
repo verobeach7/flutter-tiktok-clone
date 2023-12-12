@@ -5,6 +5,7 @@ class UserProfileModel {
   final String bio;
   final String link;
   final String birthday;
+  final bool hasAvatar;
 
   UserProfileModel({
     required this.uid,
@@ -13,6 +14,7 @@ class UserProfileModel {
     required this.bio,
     required this.link,
     required this.birthday,
+    required this.hasAvatar,
   });
 
   // 유저가 앱을 처음 실행하여 가입하는 경우. 즉, 계정이 없는 경우
@@ -22,7 +24,8 @@ class UserProfileModel {
         name = "",
         bio = "",
         link = "",
-        birthday = "";
+        birthday = "",
+        hasAvatar = false;
 
   // UserProfileModel을 json으로 만드는 메서드
   Map<String, String> toJson() {
@@ -42,5 +45,26 @@ class UserProfileModel {
         name = json["name"],
         bio = json["bio"],
         link = json["link"],
-        birthday = json["birthday"];
+        birthday = json["birthday"],
+        hasAvatar = json["hasAvatar"];
+
+  UserProfileModel copyWith({
+    String? uid,
+    String? email,
+    String? name,
+    String? bio,
+    String? link,
+    String? birthday,
+    bool? hasAvatar,
+  }) {
+    return UserProfileModel(
+      uid: uid ?? this.uid,
+      email: email ?? this.email,
+      name: name ?? this.name,
+      bio: bio ?? this.bio,
+      link: link ?? this.link,
+      birthday: birthday ?? this.birthday,
+      hasAvatar: hasAvatar ?? this.hasAvatar,
+    );
+  }
 }
