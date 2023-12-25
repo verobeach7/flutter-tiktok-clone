@@ -61,6 +61,25 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
     // Firestore DB 업데이트
     await _usersRepository.updateUser(state.value!.uid, {"hasAvatar": true});
   }
+
+  Future<void> updateProfile(String name, String bio, String link) async {
+    if (state.value == null) return;
+    state = AsyncValue.data(
+      state.value!.copyWith(
+        name: name,
+        bio: bio,
+        link: link,
+      ),
+    );
+    await _usersRepository.updateUser(
+      state.value!.uid,
+      {
+        "name": name,
+        "bio": bio,
+        "link": link,
+      },
+    );
+  }
 }
 
 final usersProvider = AsyncNotifierProvider<UsersViewModel, UserProfileModel>(

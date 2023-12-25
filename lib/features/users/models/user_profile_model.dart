@@ -48,6 +48,10 @@ class UserProfileModel {
         birthday = json["birthday"],
         hasAvatar = json["hasAvatar"];
 
+  /* copyWith는 기존 객체를 복제하고 일부 속성을 수정하여 새로운 객체를 생성하기 위한 것
+     객체 직접 수정은 객체의 불변성을 보장하지 않기 때문에 예상치 못한 결과를 초래할 수 있음
+     copyWith는 불변성을 보장하면서 객체의 일부 속성을 변경하도록 해줌
+     코드의 안정성과 가독성을 향상시킴 */
   UserProfileModel copyWith({
     String? uid,
     String? email,

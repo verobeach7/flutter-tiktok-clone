@@ -52,10 +52,11 @@ class Avatar extends ConsumerWidget {
             )
           : CircleAvatar(
               radius: 50,
-              foregroundImage: hasAvatar
-                  ? NetworkImage(
-                      "https://firebasestorage.googleapis.com/v0/b/tiktok-verobeach7.appspot.com/o/avatar%2F$uid?alt=media")
-                  : null,
+              foregroundImage: hasAvatar ? NetworkImage(
+                  // &haha=${DateTime.now().toString()}을 붙여주는 이유
+                  // NetworkImage는 한번 fetching하면 캐시하여 주소가 같으면 처음 fetching한 캐시데이터를 그대로 이용
+                  // 유니크한 현재 시간을 넣어줌으로써 주소가 계속 변경되도록 함
+                  "https://firebasestorage.googleapis.com/v0/b/tiktok-verobeach7.appspot.com/o/avatar%2F$uid?alt=media&haha=${DateTime.now().toString()}") : null,
               child: Text(name),
             ),
     );
