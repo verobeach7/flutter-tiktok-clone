@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:tiktok_clone/features/videos/view_models/timeline_view_model.dart';
+import 'package:tiktok_clone/constants/gaps.dart';
+import 'package:tiktok_clone/features/videos/view_models/upload_video_view_model.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPreviewScreen extends ConsumerStatefulWidget {
@@ -25,6 +26,9 @@ class VideoPreviewScreen extends ConsumerStatefulWidget {
 
 class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
   late final VideoPlayerController _videoPlayerController;
+  final TextEditingController _titleEditingController = TextEditingController();
+  final TextEditingController _descriptionEditingController =
+      TextEditingController();
 
   bool _savedVideo = false;
 
@@ -49,6 +53,8 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
   @override
   void dispose() {
     _videoPlayerController.dispose();
+    _titleEditingController.dispose();
+    _descriptionEditingController.dispose();
     super.dispose();
   }
 
@@ -68,7 +74,11 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
 
   void _onUploadPressed() {
     // .notifier를 써줘서 Method에 접근할 수 있게 함
-    ref.read(timelineProvider.notifier).uploadVideo();
+    ref.read(uploadVideoProvider.notifier).uploadVideo(
+          File(widget.video.path),
+          _titleEditingController.text,
+          _descriptionEditingController.text,
+        );
   }
 
   @override
@@ -88,10 +98,10 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
               ),
             ),
           IconButton(
-            onPressed: ref.watch(timelineProvider).isLoading
+            onPressed: ref.watch(uploadVideoProvider).isLoading
                 ? () {}
                 : _onUploadPressed,
-            icon: ref.watch(timelineProvider).isLoading
+            icon: ref.watch(uploadVideoProvider).isLoading
                 ? const CircularProgressIndicator()
                 : const FaIcon(
                     FontAwesomeIcons.cloudArrowUp,
@@ -100,7 +110,64 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
         ],
       ),
       body: _videoPlayerController.value.isInitialized
-          ? VideoPlayer(_videoPlayerController)
+          ? Stack(
+              alignment: Alignment.center,
+              children: [
+                VideoPlayer(_videoPlayerController),
+                Positioned(
+                  bottom: 30,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    // height: MediaQuery.of(context).size.height * 0.3,
+                    decoration: BoxDecoration(
+                      border: Border.all(),
+                      borderRadius: BorderRadius.circular(25),
+                      color: Colors.black.withOpacity(0.6),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          TextFormField(
+                            controller: _titleEditingController,
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            decoration: const InputDecoration(
+                              label: Text(
+                                "Title",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Gaps.v24,
+                          TextFormField(
+                            controller: _descriptionEditingController,
+                            minLines: 1,
+                            maxLines: 5,
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            decoration: const InputDecoration(
+                              label: Text(
+                                "Description",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            )
           : null,
     );
   }
