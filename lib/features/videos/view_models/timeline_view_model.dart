@@ -14,18 +14,8 @@ class TimelineViewModel extends AsyncNotifier<List<VideoModel>> {
     await Future.delayed(
       const Duration(seconds: 2),
     );
-    final newVideo = VideoModel(
-      title: "${DateTime.now()}",
-      description: '',
-      fileUrl: '',
-      thumbnailUrl: '',
-      creatorUid: '',
-      creator: '',
-      likes: 0,
-      comments: 0,
-      createdAt: 0,
-    );
-    _list = [..._list, newVideo];
+
+    _list = [..._list];
     // AsyncNotifier 안에는 loading, error, data와 같은 async!!! 값들이 있기 때문에
     // 다음과 같이 State를 바꿔줘야 함
     state = AsyncValue.data(_list);

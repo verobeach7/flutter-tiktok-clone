@@ -75,7 +75,11 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
   void _onUploadPressed() {
     // .notifier를 써줘서 Method에 접근할 수 있게 함
     ref.read(uploadVideoProvider.notifier).uploadVideo(
+          // XFile을 일반적인 File로 변경
+          // widget을 사용하여 앞에서 받아온 video file을 사용
           File(widget.video.path),
+          // 업로드 완료 후 사용자를 다시 홈 화면으로 보내기 위해 context를 함께 보냄
+          context,
           _titleEditingController.text,
           _descriptionEditingController.text,
         );

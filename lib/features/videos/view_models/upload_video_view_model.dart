@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
 import 'package:tiktok_clone/features/videos/models/video_model.dart';
@@ -17,7 +19,8 @@ class UploadVideoViewModel extends AsyncNotifier<void> {
     _repository = ref.read(videosRepo);
   }
 
-  Future<void> uploadVideo(File video, String title, String description) async {
+  Future<void> uploadVideo(File video, BuildContext context, String title,
+      String description) async {
     // uid를 parameter로 넘겨주기 위해 불러옴
     final user = ref.read(authRepo).user;
     final userProfile = ref.read(usersProvider).value;
@@ -31,6 +34,7 @@ class UploadVideoViewModel extends AsyncNotifier<void> {
         );
         // metadata가 있다는 것은 업로드가 성공했다는 것. 즉, Step1 영상을 스토리지에 올리기 성공
         if (task.metadata != null) {
+          print(task.ref);
           await _repository.saveVideo(
             VideoModel(
                 title: title,
@@ -43,6 +47,7 @@ class UploadVideoViewModel extends AsyncNotifier<void> {
                 comments: 0,
                 createdAt: DateTime.now().millisecondsSinceEpoch),
           );
+          context.pushReplacement("/home");
         }
       });
     }
