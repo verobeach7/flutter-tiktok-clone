@@ -42,6 +42,7 @@ export const onVideoCreated = functions.firestore
     const db = admin.firestore();
     db.collection("videos").where("creatorUid","==", 123); */
 
+    // 인덱스를 만들어서 유저프로필 페이지에 바로 영상 썸네일이 빠르게 보여질 수 있도록 함
     const db = admin.firestore();
     db.collection("users")
       .doc(video.creatorUid)

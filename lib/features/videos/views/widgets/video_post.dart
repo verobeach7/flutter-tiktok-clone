@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/videos/models/video_model.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_button.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_comments.dart';
@@ -13,12 +14,13 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 class VideoPost extends ConsumerStatefulWidget {
   final Function onVideoFinished;
-
+  final VideoModel videoData;
   final int index;
 
   const VideoPost({
     super.key,
     required this.onVideoFinished,
+    required this.videoData,
     required this.index,
   });
 
@@ -162,8 +164,9 @@ class VideoPostState extends ConsumerState<VideoPost>
             // videoPlayerController가 동영상을 불러왔는지를 확인하고 불러왔으면 VideoPlayer 위젯을 보여주고 위젯에다가 컨트롤러 자신을 넘김
             child: _videoPlayerController.value.isInitialized
                 ? VideoPlayer(_videoPlayerController)
-                : Container(
-                    color: Colors.black,
+                : Image.network(
+                    widget.videoData.thumbnailUrl,
+                    fit: BoxFit.cover,
                   ),
           ),
           Positioned.fill(
@@ -232,9 +235,9 @@ class VideoPostState extends ConsumerState<VideoPost>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "@verobeach7",
-                    style: TextStyle(
+                  Text(
+                    "@${widget.videoData.creator}",
+                    style: const TextStyle(
                       fontSize: Sizes.size20,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -245,7 +248,7 @@ class VideoPostState extends ConsumerState<VideoPost>
                     children: [
                       Expanded(
                         child: Text(
-                          "This is the SEOUL trip!!!!!!!!!!! I wanna go there again. This is the SEOUL trip!!!!!!!!!!! I wanna go there again.",
+                          widget.videoData.description,
                           style: const TextStyle(
                             fontSize: Sizes.size16,
                             color: Colors.white,
@@ -278,15 +281,15 @@ class VideoPostState extends ConsumerState<VideoPost>
             right: 10,
             child: Column(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 25,
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
                   foregroundImage: NetworkImage(
-                      "https://avatars.githubusercontent.com/u/60215757?v=4"),
+                      "https://firebasestorage.googleapis.com/v0/b/tiktok-verobeach7.appspot.com/o/avatar%2F${widget.videoData.creatorUid}?alt=media"),
                   child: Text(
-                    "verobeach7",
-                    style: TextStyle(
+                    widget.videoData.creator,
+                    style: const TextStyle(
                       fontSize: Sizes.size8,
                     ),
                   ),
@@ -294,7 +297,7 @@ class VideoPostState extends ConsumerState<VideoPost>
                 Gaps.v24,
                 VideoButton(
                   icon: FontAwesomeIcons.solidHeart,
-                  text: S.of(context).likeCount(1231912),
+                  text: S.of(context).likeCount(widget.videoData.likes),
                 ),
                 Gaps.v24,
                 GestureDetector(
@@ -302,7 +305,7 @@ class VideoPostState extends ConsumerState<VideoPost>
                       _onCommentsTap(context), // 함수가 매개변수를 받아야 할 때 이렇게 처리
                   child: VideoButton(
                     icon: FontAwesomeIcons.solidComment,
-                    text: S.of(context).commentCount(1231),
+                    text: S.of(context).commentCount(widget.videoData.comments),
                   ),
                 ),
                 Gaps.v24,

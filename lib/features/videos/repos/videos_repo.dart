@@ -22,6 +22,14 @@ class VideosRepository {
   Future<void> saveVideo(VideoModel data) async {
     await _db.collection("videos").add(data.toJson());
   }
+
+  // Map<String, dynamic>: json 포맷으로 되어있음
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchVideos() {
+    return _db
+        .collection("videos")
+        .orderBy("createdAt", descending: true)
+        .get();
+  }
 }
 
 final videosRepo = Provider((ref) => VideosRepository());

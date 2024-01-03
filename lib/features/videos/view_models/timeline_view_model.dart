@@ -2,33 +2,26 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/features/videos/models/video_model.dart';
+import 'package:tiktok_clone/features/videos/repos/videos_repo.dart';
 
 class TimelineViewModel extends AsyncNotifier<List<VideoModel>> {
-  // List<VideoModel> _list = [VideoModel(title: "First video")];
+  late final VideosRepository _repository;
+  // List를 사용하는 이유: 복사본 유지, Pagenation을 위해 List에 아이템을 추가하기 위해
   List<VideoModel> _list = [];
 
-  // 업로드 버튼을 누르면 loading 상태로 변경 후, Firebase에 업로드하고, 그 후 새 데이터를 가지게 됨
-  void uploadVideo() async {
-    // timeline_view_model이 다시 loading state가 되도록 해줌
-    state = const AsyncValue.loading();
-    await Future.delayed(
-      const Duration(seconds: 2),
-    );
-
-    _list = [..._list];
-    // AsyncNotifier 안에는 loading, error, data와 같은 async!!! 값들이 있기 때문에
-    // 다음과 같이 State를 바꿔줘야 함
-    state = AsyncValue.data(_list);
-  }
-
-  // Notifier는 build 메서드에서 PlaybackConfigModel만 반환하는데 반해
-  // FutureOr는 Future 또는 Model을 반환함
   @override
   FutureOr<List<VideoModel>> build() async {
-    await Future.delayed(
-      const Duration(seconds: 5),
+    _repository = ref.read(videosRepo);
+    // fetchVideos: db의 videos 컬렉션을 생성일 기준으로 내림차순 정렬
+    final result = await _repository.fetchVideos();
+    final newList = result.docs.map(
+      // 각각의 video doc을 Map<String, dynamic>으로 변환
+      (doc) => VideoModel.fromJson(
+        doc.data(),
+      ),
     );
-    // throw Exception("OMG! can't ferch.");
+    // Iterable 타입을 List 타입으로 변경
+    _list = newList.toList();
     return _list;
   }
 }
