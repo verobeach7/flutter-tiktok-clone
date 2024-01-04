@@ -34,7 +34,6 @@ class UploadVideoViewModel extends AsyncNotifier<void> {
         );
         // metadata가 있다는 것은 업로드가 성공했다는 것. 즉, Step1 영상을 스토리지에 올리기 성공
         if (task.metadata != null) {
-          print(task.ref);
           await _repository.saveVideo(
             VideoModel(
                 title: title,

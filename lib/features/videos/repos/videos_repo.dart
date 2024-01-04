@@ -24,11 +24,20 @@ class VideosRepository {
   }
 
   // Map<String, dynamic>: json 포맷으로 되어있음
-  Future<QuerySnapshot<Map<String, dynamic>>> fetchVideos() {
-    return _db
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchVideos(
+      // named parameter로 설정
+      {int? lastItemCreatedAt}) {
+    // NoSql은 정렬 먼저 해주고 어디서부터 가져올지를 정해줘야 함
+    final query = _db
         .collection("videos")
         .orderBy("createdAt", descending: true)
-        .get();
+        // 2개만 불러오도록 제한: 서버 사용을 절약할 수 있음
+        .limit(2);
+    if (lastItemCreatedAt == null) {
+      return query.get();
+    } else {
+      return query.startAfter([lastItemCreatedAt]).get();
+    }
   }
 }
 

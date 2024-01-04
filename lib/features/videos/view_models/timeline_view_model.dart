@@ -9,20 +9,38 @@ class TimelineViewModel extends AsyncNotifier<List<VideoModel>> {
   // List를 사용하는 이유: 복사본 유지, Pagenation을 위해 List에 아이템을 추가하기 위해
   List<VideoModel> _list = [];
 
-  @override
-  FutureOr<List<VideoModel>> build() async {
-    _repository = ref.read(videosRepo);
+  // private으로 _fetchVideos를 만들어 공통된 작업을 하게 함
+  Future<List<VideoModel>> _fetchVideos({int? lastItemCreatedAt}) async {
     // fetchVideos: db의 videos 컬렉션을 생성일 기준으로 내림차순 정렬
-    final result = await _repository.fetchVideos();
-    final newList = result.docs.map(
+    // named parameter를 사용하지 않으면 null만 표기하기 때문에 코드를 이해하기 어려움
+    final result = await _repository.fetchVideos(
+      lastItemCreatedAt: lastItemCreatedAt,
+    );
+    final videos = result.docs.map(
       // 각각의 video doc을 Map<String, dynamic>으로 변환
       (doc) => VideoModel.fromJson(
         doc.data(),
       ),
     );
+    return videos.toList();
+  }
+
+  @override
+  FutureOr<List<VideoModel>> build() async {
+    _repository = ref.read(videosRepo);
     // Iterable 타입을 List 타입으로 변경
-    _list = newList.toList();
+    _list = await _fetchVideos(
+      lastItemCreatedAt: null,
+    );
     return _list;
+  }
+
+  // 다음 페이지를 불러오기 위한 method
+  Future fetchNextPage() async {
+    final nextPage =
+        await _fetchVideos(lastItemCreatedAt: _list.last.createdAt);
+    _list = [..._list, ...nextPage];
+    state = AsyncValue.data(_list);
   }
 }
 
