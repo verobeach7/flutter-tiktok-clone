@@ -41,18 +41,6 @@ class VideosRepository {
   }
 
   Future<void> likeVideo(String videoId, String userId) async {
-    /* // 유저가 이미 좋아요를 했는지 아닌지를 확인하기 위해 전체 db를 다 검색해야 함
-    // 많은 서버 탐색 비용을 지출해야 함(NoSql의 한계)
-    _db
-        .collection("likes")
-        .where("videoId", isEqualTo: videoId)
-        .where("userId", isEqualTo: userId);
-    await _db.collection("likes").add(
-      {
-        "videoId": videoId,
-        "userId": userId,
-      },
-    ); */
     final query = _db.collection("likes").doc("${videoId}000$userId");
     final like = await query.get();
 
@@ -65,6 +53,12 @@ class VideosRepository {
     } else {
       query.delete();
     }
+  }
+
+  Future<bool> isLikedVideo(String videoId, String userId) async {
+    final isLikeVideo =
+        await _db.collection("likes").doc("${videoId}000$userId").get();
+    return isLikeVideo.exists;
   }
 }
 

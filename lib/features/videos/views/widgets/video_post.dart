@@ -43,21 +43,37 @@ class VideoPostState extends ConsumerState<VideoPost>
 
   bool _isEllipsis = true;
 
+  bool _isLiked = false;
+
+  int likes = 0;
+
   void _onLikeTap() {
     // ref.read(videoPostProvider.notifier).likeVideo(videoId);
     // 위의 방법으로도 가능하나 argument를 사용하여 provider를 초기화 시킬 수 있음
     ref.read(videoPostProvider(widget.videoData.id).notifier).likeVideo();
+    setState(() {
+      _isLiked ? likes-- : likes++;
+      _isLiked = !_isLiked;
+      print("_isLiked Variable: $_isLiked");
+    });
   }
 
-  void _initVideoPlayer() async {
+  Future<void> _initVideoPlayer() async {
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
+
     _isMuted = ref.read(playbackConfigProvider).muted;
+
     _isPaused = !ref.read(playbackConfigProvider).autoplay;
+
     if (kIsWeb || _isMuted) {
       await _videoPlayerController.setVolume(0);
       _isMuted = true;
     }
+
+    _isLiked = await ref
+        .read(videoPostProvider(widget.videoData.id).notifier)
+        .isLikedVideo();
 
     setState(() {});
   }
@@ -75,6 +91,8 @@ class VideoPostState extends ConsumerState<VideoPost>
       value: 1.5,
       duration: _animationDuration,
     );
+
+    likes = widget.videoData.likes;
   }
 
   // dispose 시켜주지 않으면 리소스 낭비로 메모리가 부족해 뻗음
@@ -305,7 +323,8 @@ class VideoPostState extends ConsumerState<VideoPost>
                   onTap: _onLikeTap,
                   child: VideoButton(
                     icon: FontAwesomeIcons.solidHeart,
-                    text: S.of(context).likeCount(widget.videoData.likes),
+                    text: S.of(context).likeCount(likes),
+                    isLiked: _isLiked,
                   ),
                 ),
                 Gaps.v24,
