@@ -31,8 +31,7 @@ class VideoPost extends ConsumerStatefulWidget {
 
 class VideoPostState extends ConsumerState<VideoPost>
     with SingleTickerProviderStateMixin {
-  final VideoPlayerController _videoPlayerController =
-      VideoPlayerController.asset("assets/videos/IMG_2181.MOV");
+  late final VideoPlayerController _videoPlayerController;
   final Duration _animationDuration = const Duration(milliseconds: 200);
 
   late final AnimationController _animationController;
@@ -54,11 +53,12 @@ class VideoPostState extends ConsumerState<VideoPost>
     setState(() {
       _isLiked ? likes-- : likes++;
       _isLiked = !_isLiked;
-      print("_isLiked Variable: $_isLiked");
     });
   }
 
   Future<void> _initVideoPlayer() async {
+    final url = Uri.parse(widget.videoData.fileUrl);
+    _videoPlayerController = VideoPlayerController.networkUrl(url);
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
 
