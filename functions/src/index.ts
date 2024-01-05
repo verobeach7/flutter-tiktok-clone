@@ -53,3 +53,27 @@ export const onVideoCreated = functions.firestore
         videoId: snapshot.id,
       });
   });
+
+export const onLikedCreated = functions.firestore
+  .document("likes/{likeId}")
+  .onCreate(async (snapshot, context) => {
+    const db = admin.firestore();
+    const [videoId, _] = snapshot.id.split("000");
+    await db
+      .collection("videos")
+      .doc(videoId)
+      // admin 갓 모드를 사용하여 해당하는 필드의 값을 1 올리라고 명령
+      .update({ likes: admin.firestore.FieldValue.increment(1) });
+  });
+
+export const onLikedRemoved = functions.firestore
+  .document("likes/{likeId}")
+  .onDelete(async (snapshot, context) => {
+    const db = admin.firestore();
+    const [videoId, _] = snapshot.id.split("000");
+    await db
+      .collection("videos")
+      .doc(videoId)
+      // admin 갓 모드를 사용하여 해당하는 필드의 값을 1 올리라고 명령
+      .update({ likes: admin.firestore.FieldValue.increment(-1) });
+  });

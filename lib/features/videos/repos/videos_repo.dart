@@ -62,6 +62,8 @@ class VideosRepository {
           "createdAt": DateTime.now().millisecondsSinceEpoch,
         },
       );
+    } else {
+      query.delete();
     }
   }
 }
