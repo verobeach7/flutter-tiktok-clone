@@ -1,6 +1,7 @@
 // 진짜 비디오를 가지지는 않음. 아직 Firebase에 대해서 공부하지 않았기 때문에 시뮬레이션만 함
 
 class VideoModel {
+  final String id;
   final String title;
   final String description;
   final String fileUrl;
@@ -12,6 +13,7 @@ class VideoModel {
   final int createdAt;
 
   VideoModel({
+    required this.id,
     required this.title,
     required this.description,
     required this.fileUrl,
@@ -23,8 +25,10 @@ class VideoModel {
     required this.createdAt,
   });
 
-  VideoModel.fromJson(Map<String, dynamic> json)
-      : title = json["title"],
+  VideoModel.fromJson(
+      {required Map<String, dynamic> json, required String videoId})
+      : id = videoId,
+        title = json["title"],
         description = json["description"],
         fileUrl = json["fileUrl"],
         thumbnailUrl = json["thumbnailUrl"],
@@ -36,6 +40,7 @@ class VideoModel {
 
   Map<String, dynamic> toJson() {
     return {
+      "id": id,
       "title": title,
       "description": description,
       "fileUrl": fileUrl,

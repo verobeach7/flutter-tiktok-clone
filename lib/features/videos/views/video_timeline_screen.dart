@@ -44,10 +44,9 @@ class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
     super.dispose();
   }
 
+  // refresh가 리턴된 후 RefreshIndacator가 호출되기 때문에 반드시 Future를 반환해주어야 함.
   Future<void> _onRefresh() {
-    return Future.delayed(
-      const Duration(seconds: 5),
-    );
+    return ref.watch(timelineProvider.notifier).refresh();
   }
 
   @override

@@ -6,6 +6,7 @@ import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/videos/models/video_model.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
+import 'package:tiktok_clone/features/videos/view_models/video_post_view_model.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_button.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_comments.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
@@ -42,7 +43,12 @@ class VideoPostState extends ConsumerState<VideoPost>
 
   bool _isEllipsis = true;
 
-  // 시간이 소요되므로 비동기 작업 필요 async-await
+  void _onLikeTap() {
+    // ref.read(videoPostProvider.notifier).likeVideo(videoId);
+    // 위의 방법으로도 가능하나 argument를 사용하여 provider를 초기화 시킬 수 있음
+    ref.read(videoPostProvider(widget.videoData.id).notifier).likeVideo();
+  }
+
   void _initVideoPlayer() async {
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
@@ -295,9 +301,12 @@ class VideoPostState extends ConsumerState<VideoPost>
                   ),
                 ),
                 Gaps.v24,
-                VideoButton(
-                  icon: FontAwesomeIcons.solidHeart,
-                  text: S.of(context).likeCount(widget.videoData.likes),
+                GestureDetector(
+                  onTap: _onLikeTap,
+                  child: VideoButton(
+                    icon: FontAwesomeIcons.solidHeart,
+                    text: S.of(context).likeCount(widget.videoData.likes),
+                  ),
                 ),
                 Gaps.v24,
                 GestureDetector(
