@@ -34,7 +34,11 @@ final messagesProvider = AsyncNotifierProvider<MessagesViewModel, void>(
   () => MessagesViewModel(),
 );
 
-final chatProvider = StreamProvider<List<MessageModel>>((ref) {
+/* .autoDispose를 사용해야 하는 이유: riverpod은 flutter에 의존하지 않기 때문에
+ 위젯트리 내에 있지 않음. 위젯트리 밖에 존재하며 class로 전역변수로서 존재함.
+ 채팅방에서 나가면 즉시 dispose됨. 이걸 하지 않으면 채팅방을 나가도 계속해서 살아있기 때문에
+ 알림을 계속해서 받게 됨. */
+final chatProvider = StreamProvider.autoDispose<List<MessageModel>>((ref) {
   final db = FirebaseFirestore.instance;
 
   return db
@@ -52,6 +56,8 @@ final chatProvider = StreamProvider<List<MessageModel>>((ref) {
                 doc.data(),
               ),
             )
+            .toList()
+            .reversed
             .toList(),
       );
 });
