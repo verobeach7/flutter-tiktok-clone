@@ -310,7 +310,7 @@ class VideoPostState extends ConsumerState<VideoPost>
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
                   foregroundImage: NetworkImage(
-                      "https://firebasestorage.googleapis.com/v0/b/tiktok-verobeach7.appspot.com/o/avatar%2F${widget.videoData.creatorUid}?alt=media&token=50516d79-bed0-4402-bced-eb321179814c"),
+                      "https://firebasestorage.googleapis.com/v0/b/tiktok-verobeach7.appspot.com/o/avatar%2F${widget.videoData.creatorUid}?alt=media"),
                   child: Text(
                     widget.videoData.creator,
                     style: const TextStyle(

@@ -1,11 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/inbox/view_models/messages_view_model.dart';
 import 'package:tiktok_clone/utils.dart';
 
-class ChatDetailScreen extends StatefulWidget {
+// view_model에 알려주기 위해 reference에 접근해야 함
+// 이를 위해 ConsumerStatefulWidget으로 변경
+class ChatDetailScreen extends ConsumerStatefulWidget {
   static const String routeName = "chatDetail";
   // nestedRoute는 '/'를 사용하지 않음
   static const String routeURL = ":chatId";
@@ -18,10 +22,10 @@ class ChatDetailScreen extends StatefulWidget {
   });
 
   @override
-  State<ChatDetailScreen> createState() => _ChatDetailScreenState();
+  ConsumerState<ChatDetailScreen> createState() => _ChatDetailScreenState();
 }
 
-class _ChatDetailScreenState extends State<ChatDetailScreen> {
+class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _textEditingController = TextEditingController();
 
@@ -44,11 +48,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     });
   }
 
-  void _onMessageSubmitted(String value) {
+  void _onMessageSubmitted(String text) {
     if (!_isMessage) return;
-    if (kDebugMode) {
-      print("Submitted $value");
-    }
+    // 1. sendMessage는 Future로 await을 사용해야 하지만 이를 사용하지 않고도 가능
+    ref.read(messagesProvider.notifier).sendMessage(text);
     setState(() {
       _message = "";
       _isMessage = false;
@@ -70,6 +73,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 2. ref.watch를 사용하여 loading 중인지 확인
+    final isLoading = ref.watch(messagesProvider).isLoading;
     final isDark = isDarkMode(context);
     return Scaffold(
       backgroundColor: isDark ? null : Colors.grey.shade50,
@@ -271,7 +276,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                               right: 2,
                             ),
                             child: IconButton(
-                              onPressed: () => _onMessageSubmitted(_message),
+                              // 3. isLoading을 사용하여 messageProvider가 진행 중인지 확인
+                              onPressed: () => isLoading
+                                  ? null
+                                  : _onMessageSubmitted(_message),
                               icon: FaIcon(
                                 _isMessage
                                     ? FontAwesomeIcons.solidPaperPlane
