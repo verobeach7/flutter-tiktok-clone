@@ -7,7 +7,7 @@ import 'package:tiktok_clone/features/videos/repos/videos_repo.dart';
 // FamilyAsyncNotifier는 Notifier에게 인자를 보낼 수 있게 해 줌
 class VideoPostViewModel extends FamilyAsyncNotifier<void, String> {
   late final VideosRepository _repository;
-  late final _videoId;
+  late final String _videoId;
 
   @override
   FutureOr<void> build(String videoId) {

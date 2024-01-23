@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tiktok_clone/features/inbox/views/widgets/user_selection_modal.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/inbox/views/chat_detail_screen.dart';
 
@@ -34,6 +35,18 @@ class _ChatsScreenState extends State<ChatsScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _showUserSelection(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (context) => const UserSelectionModal(),
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height,
+      ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+    );
   }
 
   void _addItem() {
@@ -116,7 +129,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
         title: const Text("Direct messages"),
         actions: [
           IconButton(
-            onPressed: _addItem,
+            onPressed: () => _showUserSelection(context),
             icon: const FaIcon(
               FontAwesomeIcons.plus,
             ),
