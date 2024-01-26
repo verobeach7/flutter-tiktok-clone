@@ -28,7 +28,7 @@ class UserProfileModel {
         hasAvatar = false;
 
   // UserProfileModel을 json으로 만드는 메서드
-  Map<String, String> toJson() {
+  Map<String, dynamic> toJson() {
     return {
       "uid": uid,
       "email": email,
@@ -36,6 +36,7 @@ class UserProfileModel {
       "bio": bio,
       "link": link,
       "birthday": birthday,
+      "hasAvatar": hasAvatar,
     };
   }
 

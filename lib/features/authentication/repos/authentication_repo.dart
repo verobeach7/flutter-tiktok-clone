@@ -38,7 +38,7 @@ class AuthenticationRepository {
 // Provider: read-only value를 Expose함
 final authRepo = Provider((ref) => AuthenticationRepository());
 
-final authState = StreamProvider((ref) {
+final authState = StreamProvider.autoDispose((ref) {
   final repo = ref.read(authRepo);
   return repo.authStateChanges();
 });

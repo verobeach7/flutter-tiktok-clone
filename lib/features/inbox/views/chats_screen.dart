@@ -37,8 +37,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
     super.dispose();
   }
 
-  void _showUserSelection(BuildContext context) async {
-    await showModalBottomSheet(
+  void _onUserSelectPressed() {
+    showModalBottomSheet(
       context: context,
       builder: (context) => const UserSelectionModal(),
       constraints: BoxConstraints(
@@ -129,7 +129,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
         title: const Text("Direct messages"),
         actions: [
           IconButton(
-            onPressed: () => _showUserSelection(context),
+            onPressed: () => _onUserSelectPressed(),
             icon: const FaIcon(
               FontAwesomeIcons.plus,
             ),
@@ -151,7 +151,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
               opacity: animation,
               child: SizeTransition(
                 sizeFactor: animation,
-                child: _makeTile(index),
+                // child: _makeTile(index),
+                child: const Text("test"),
               ),
             );
           },
