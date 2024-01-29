@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tiktok_clone/features/inbox/views/widgets/user_selection_modal.dart';
+import 'package:tiktok_clone/features/inbox/view_models/chat_room_view_model.dart';
+import 'package:tiktok_clone/features/inbox/views/widgets/chat_user_select_modal.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/inbox/views/chat_detail_screen.dart';
 
-class ChatsScreen extends StatefulWidget {
+class ChatsScreen extends ConsumerStatefulWidget {
   static const String routeName = "chats";
   static const String routeURL = "/chats";
 
   const ChatsScreen({super.key});
 
   @override
-  State<ChatsScreen> createState() => _ChatsScreenState();
+  ConsumerState<ChatsScreen> createState() => _ChatsScreenState();
 }
 
-class _ChatsScreenState extends State<ChatsScreen> {
+class _ChatsScreenState extends ConsumerState<ChatsScreen> {
   // key를 가지고 AnimatedListState에 접근 가능
   final GlobalKey<AnimatedListState> _key = GlobalKey<AnimatedListState>();
 
@@ -40,7 +42,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
   void _onUserSelectPressed() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => const UserSelectionModal(),
+      builder: (context) => const ChatUserSelectModal(),
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height,
       ),
@@ -136,28 +138,60 @@ class _ChatsScreenState extends State<ChatsScreen> {
           ),
         ],
       ),
-      body: Scrollbar(
-        controller: _scrollController,
-        child: AnimatedList(
-          key: _key,
-          controller: _scrollController,
-          padding: const EdgeInsets.symmetric(
-            vertical: Sizes.size10,
-          ),
-          // itemBuilder는 아이템이 생길 때만 build함
-          itemBuilder: (context, index, animation) {
-            return FadeTransition(
-              key: UniqueKey(),
-              opacity: animation,
-              child: SizeTransition(
-                sizeFactor: animation,
-                // child: _makeTile(index),
-                child: const Text("test"),
+      body: ref.watch(chatRoomsIdsProvider).when(
+            data: (chatRooms) {
+              final chatRoomIds = chatRooms.map((e) => e.chatRoomId).toList();
+              // print(chatRoomIds[1]);
+              final numberOfChatRooms = chatRoomIds.length;
+              // print(numberOfChatRooms);
+              return ref
+                  .read(chatRoomsInfoProvider(ChatRooms(
+                      chatRoomIds: chatRoomIds,
+                      numberOfChatRooms: numberOfChatRooms)))
+                  .when(
+                    data: (chatRooms) {
+                      return Scrollbar(
+                        controller: _scrollController,
+                        child: AnimatedList(
+                          key: _key,
+                          controller: _scrollController,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: Sizes.size10,
+                          ),
+                          // itemBuilder는 아이템이 생길 때만 build함
+                          itemBuilder: (context, index, animation) {
+                            return FadeTransition(
+                              key: UniqueKey(),
+                              opacity: animation,
+                              child: SizeTransition(
+                                sizeFactor: animation,
+                                child: _makeTile(index),
+                                // child: const Text("test"),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    error: (error, stackTrack) => Center(
+                      child: Text(
+                        error.toString(),
+                      ),
+                    ),
+                    loading: () => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+            },
+            error: (error, stackTrack) => Center(
+              child: Text(
+                error.toString(),
               ),
-            );
-          },
-        ),
-      ),
+            ),
+            loading: () => const Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
     );
   }
 }

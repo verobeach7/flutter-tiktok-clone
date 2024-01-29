@@ -5,14 +5,18 @@ import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/inbox/view_models/chat_user_select_view_model.dart';
 
-class UserSelectionModal extends ConsumerStatefulWidget {
-  const UserSelectionModal({super.key});
+class ChatUserSelectModal extends ConsumerStatefulWidget {
+  const ChatUserSelectModal({super.key});
 
   @override
-  UserSelectionState createState() => UserSelectionState();
+  ChatUserSelectState createState() => ChatUserSelectState();
 }
 
-class UserSelectionState extends ConsumerState<UserSelectionModal> {
+class ChatUserSelectState extends ConsumerState<ChatUserSelectModal> {
+  void _onUserTap(String uid) {
+    print("selected: $uid");
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -47,32 +51,37 @@ class UserSelectionState extends ConsumerState<UserSelectionModal> {
                           ],
                         ),
                         body: ListView.builder(
-                          itemCount: userList.length,
-                          itemBuilder: (context, index) => ListTile(
-                            minVerticalPadding: Sizes.size16,
-                            leading: CircleAvatar(
-                              radius: Sizes.size32,
-                              foregroundImage: userList[index].hasAvatar
-                                  ? NetworkImage(
-                                      "https://firebasestorage.googleapis.com/v0/b/tiktok-verobeach7.appspot.com/o/avatar%2F${userList[index].uid}?alt=media")
-                                  : null,
-                              child: userList[index].hasAvatar
-                                  ? null
-                                  : Text(userList[index].name),
-                            ),
-                            title: Text(
-                              userList[index].name,
-                              style: const TextStyle(
-                                fontSize: Sizes.size18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            subtitle: Text(
-                              userList[index].bio,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
+                            itemCount: userList.length,
+                            itemBuilder: (context, index) {
+                              final eachUser = userList[index];
+                              return GestureDetector(
+                                onTap: () => _onUserTap(eachUser.uid),
+                                child: ListTile(
+                                  minVerticalPadding: Sizes.size16,
+                                  leading: CircleAvatar(
+                                    radius: Sizes.size32,
+                                    foregroundImage: eachUser.hasAvatar
+                                        ? NetworkImage(
+                                            "https://firebasestorage.googleapis.com/v0/b/tiktok-verobeach7.appspot.com/o/avatar%2F${userList[index].uid}?alt=media")
+                                        : null,
+                                    child: eachUser.hasAvatar
+                                        ? null
+                                        : Text(eachUser.name),
+                                  ),
+                                  title: Text(
+                                    eachUser.name,
+                                    style: const TextStyle(
+                                      fontSize: Sizes.size18,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    eachUser.bio,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              );
+                            }),
                       ),
                     ),
                   )
