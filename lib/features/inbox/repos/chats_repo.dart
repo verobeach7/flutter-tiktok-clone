@@ -20,6 +20,22 @@ class ChatsRepository {
         )
         .toList();
   }
+
+  Future<UserProfileModel> getUser({required String userId}) async {
+    late final UserProfileModel otherUser;
+    await _db.collection("users").doc(userId).get().then((value) {
+      // print(value.exists);
+      if (value.exists) {
+        otherUser = UserProfileModel.fromJson(value.data()!);
+      } else {
+        otherUser = UserProfileModel.empty();
+      }
+    });
+    return otherUser;
+    /* return await _db.collection("users").doc(userId).get().then(
+          (value) => UserProfileModel.fromJson(value.data()!),
+        ); */
+  }
 }
 
 final chatsRepo = Provider(

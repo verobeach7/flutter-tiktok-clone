@@ -21,3 +21,17 @@ void showFirebaseErrorSnack(
     ),
   );
 }
+
+String convertEpochToTime(int timeStamp) {
+  final dateTime = DateTime.fromMillisecondsSinceEpoch(
+    timeStamp,
+  );
+  final amOrPm = dateTime.hour >= 12 ? "PM" : "AM";
+  final hour = (dateTime.hour % 12) == 0 ? 12 : dateTime.hour % 12;
+  final minute =
+      dateTime.minute < 10 ? "0${dateTime.minute}" : "${dateTime.minute}";
+
+  final String convertedTime = "$amOrPm $hour:$minute";
+
+  return convertedTime;
+}

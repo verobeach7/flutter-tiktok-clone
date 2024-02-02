@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
+import 'package:tiktok_clone/features/inbox/models/chat_room_model.dart';
+import 'package:tiktok_clone/features/inbox/repos/chats_repo.dart';
 import 'package:tiktok_clone/features/inbox/view_models/chat_room_view_model.dart';
 import 'package:tiktok_clone/features/inbox/views/widgets/chat_user_select_modal.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/inbox/views/chat_detail_screen.dart';
+import 'package:tiktok_clone/features/users/models/user_profile_model.dart';
+import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
+import 'package:tiktok_clone/utils.dart';
 
 class ChatsScreen extends ConsumerStatefulWidget {
   static const String routeName = "chats";
@@ -51,7 +57,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
     );
   }
 
-  void _addItem() {
+  /*  void _addItem() {
     if (_key.currentState != null) {
       _key.currentState!.insertItem(
         _items.length,
@@ -59,9 +65,9 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
       );
       _items.add(_items.length);
     }
-  }
+  } */
 
-  void _deleteItem(int index) {
+  /* void _deleteItem(int index) {
     if (_key.currentState != null) {
       _key.currentState!.removeItem(
         index,
@@ -76,7 +82,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
       );
       _items.removeAt(index);
     }
-  }
+  } */
 
   void _onChatTap(int index) {
     // context.push("/chats/$index");
@@ -88,39 +94,62 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
     );
   }
 
-  Widget _makeTile(int index) {
-    return ListTile(
-      onLongPress: () => _deleteItem(index),
-      onTap: () => _onChatTap(index),
-      leading: const CircleAvatar(
-        radius: 30,
-        foregroundImage: NetworkImage(
-            "https://avatars.githubusercontent.com/u/60215757?v=4"),
-        child: Text(
-          "희성",
-        ),
-      ),
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text(
-            "혜미 ($index)",
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
+  Widget _makeTile(int index, ChatRoomModel chatRoom) {
+    final user = ref.read(authRepo).user;
+    final otherUserId =
+        user!.uid == chatRoom.personA ? chatRoom.personB : chatRoom.personA;
+
+    return ref.watch(chatRoomProvider(otherUserId)).when(
+          data: (otherUser) {
+            return ListTile(
+              // onLongPress: () => _deleteItem(index),
+              onLongPress: () {},
+              onTap: () => _onChatTap(index),
+              leading: CircleAvatar(
+                radius: 30,
+                foregroundImage: otherUser.hasAvatar
+                    ? NetworkImage(
+                        "https://firebasestorage.googleapis.com/v0/b/tiktok-verobeach7.appspot.com/o/avatar%2F$otherUserId?alt=media",
+                      )
+                    : null,
+                child: Text(
+                  otherUser.name,
+                  style: const TextStyle(
+                    fontSize: Sizes.size10,
+                  ),
+                ),
+              ),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    otherUser.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    convertEpochToTime(chatRoom.lastStamp),
+                    style: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontSize: Sizes.size12,
+                    ),
+                  ),
+                ],
+              ),
+              subtitle: Text(chatRoom.lastText),
+            );
+          },
+          error: (error, stackTrace) => Center(
+            child: Text(
+              error.toString(),
             ),
           ),
-          Text(
-            "2:16 PM",
-            style: TextStyle(
-              color: Colors.grey.shade500,
-              fontSize: Sizes.size12,
-            ),
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
           ),
-        ],
-      ),
-      subtitle: const Text("Don't forget to make video"),
-    );
+        );
   }
 
   @override
@@ -138,55 +167,34 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
           ),
         ],
       ),
-      body: ref.watch(chatRoomsIdsProvider).when(
-            data: (chatRooms) {
-              final chatRoomIds = chatRooms.map((e) => e.chatRoomId).toList();
-              // print(chatRoomIds[1]);
-              final numberOfChatRooms = chatRoomIds.length;
-              // print(numberOfChatRooms);
-              return ref
-                  .read(chatRoomsInfoProvider(ChatRooms(
-                      chatRoomIds: chatRoomIds,
-                      numberOfChatRooms: numberOfChatRooms)))
-                  .when(
-                    data: (chatRooms) {
-                      return Scrollbar(
-                        controller: _scrollController,
-                        child: AnimatedList(
-                          key: _key,
-                          controller: _scrollController,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: Sizes.size10,
-                          ),
-                          // itemBuilder는 아이템이 생길 때만 build함
-                          itemBuilder: (context, index, animation) {
-                            return FadeTransition(
-                              key: UniqueKey(),
-                              opacity: animation,
-                              child: SizeTransition(
-                                sizeFactor: animation,
-                                child: _makeTile(index),
-                                // child: const Text("test"),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                    error: (error, stackTrack) => Center(
-                      child: Text(
-                        error.toString(),
+      body: ref.watch(chatRoomsListProvider).when(
+            data: (chatRoomsList) {
+              return Scrollbar(
+                controller: _scrollController,
+                child: AnimatedList(
+                  key: _key,
+                  initialItemCount: chatRoomsList.length,
+                  controller: _scrollController,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: Sizes.size10,
+                  ),
+                  // itemBuilder는 아이템이 생길 때만 build함
+                  itemBuilder: (context, index, animation) {
+                    // print("Make tile: $index");
+                    return FadeTransition(
+                      key: UniqueKey(),
+                      opacity: animation,
+                      child: SizeTransition(
+                        sizeFactor: animation,
+                        child: _makeTile(index, chatRoomsList[index]),
                       ),
-                    ),
-                    loading: () => const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
+                    );
+                  },
+                ),
+              );
             },
-            error: (error, stackTrack) => Center(
-              child: Text(
-                error.toString(),
-              ),
+            error: (error, stackTrace) => Center(
+              child: Text(error.toString()),
             ),
             loading: () => const Center(
               child: CircularProgressIndicator(),
