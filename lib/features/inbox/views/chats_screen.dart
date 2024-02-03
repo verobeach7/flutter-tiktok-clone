@@ -4,13 +4,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/inbox/models/chat_room_model.dart';
-import 'package:tiktok_clone/features/inbox/repos/chats_repo.dart';
 import 'package:tiktok_clone/features/inbox/view_models/chat_room_view_model.dart';
 import 'package:tiktok_clone/features/inbox/views/widgets/chat_user_select_modal.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/inbox/views/chat_detail_screen.dart';
 import 'package:tiktok_clone/features/users/models/user_profile_model.dart';
-import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
 import 'package:tiktok_clone/utils.dart';
 
 class ChatsScreen extends ConsumerStatefulWidget {
@@ -57,7 +55,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
     );
   }
 
-  /*  void _addItem() {
+  void _addItem() {
     if (_key.currentState != null) {
       _key.currentState!.insertItem(
         _items.length,
@@ -65,7 +63,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
       );
       _items.add(_items.length);
     }
-  } */
+  }
 
   /* void _deleteItem(int index) {
     if (_key.currentState != null) {

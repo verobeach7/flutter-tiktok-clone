@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/inbox/view_models/messages_view_model.dart';
+import 'package:tiktok_clone/features/inbox/views/chats_screen.dart';
 import 'package:tiktok_clone/features/users/models/user_profile_model.dart';
 import 'package:tiktok_clone/utils.dart';
 
@@ -51,12 +53,37 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     });
   }
 
-  void _onMessageSubmitted(String text, String chatRoomId) {
+  void _onFirstMessageSubmitted(
+    String text,
+    String chatRoomId,
+    bool isFirstMsg,
+    UserProfileModel otherUser,
+  ) {
+    if (!_isMessage) return;
+    ref.read(messagesProvider(chatRoomId).notifier).handleMessage(
+        text: text,
+        isFirstMsg: isFirstMsg,
+        chatRoomId: chatRoomId,
+        otherUser: otherUser);
+    setState(() {
+      _message = "";
+      _isMessage = false;
+      _textEditingController.clear();
+    });
+  }
+
+  void _onMessageSubmitted(
+    String text,
+    String chatRoomId,
+    bool isFirstMsg,
+  ) {
     if (!_isMessage) return;
     // 1. sendMessage는 Future로 await을 사용해야 하지만 이를 사용하지 않고도 가능
-    ref
-        .read(messagesProvider(chatRoomId).notifier)
-        .sendMessage(text, chatRoomId);
+    ref.read(messagesProvider(chatRoomId).notifier).handleMessage(
+          text: text,
+          isFirstMsg: isFirstMsg,
+          chatRoomId: chatRoomId,
+        );
     setState(() {
       _message = "";
       _isMessage = false;
@@ -83,6 +110,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     final otherUser = widget.otherUser;
     final isLoading = ref.watch(messagesProvider(chatRoomId)).isLoading;
     final isDark = isDarkMode(context);
+    bool isFirstMsg = true;
     return Scaffold(
       backgroundColor: isDark ? null : Colors.grey.shade50,
       appBar: AppBar(
@@ -160,6 +188,8 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
             children: [
               ref.watch(chatProvider(chatRoomId)).when(
                     data: (data) {
+                      if (data.isNotEmpty) isFirstMsg = false;
+
                       return ListView.separated(
                         reverse: true,
                         controller: _scrollController,
@@ -257,8 +287,20 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                               TextField(
                                 controller: _textEditingController,
                                 onChanged: (value) => _onMessageChanged(value),
-                                onSubmitted: (value) =>
-                                    _onMessageSubmitted(value, chatRoomId),
+                                onSubmitted: (value) => isLoading
+                                    ? null
+                                    : isFirstMsg
+                                        ? _onFirstMessageSubmitted(
+                                            _message,
+                                            chatRoomId,
+                                            isFirstMsg,
+                                            otherUser,
+                                          )
+                                        : _onMessageSubmitted(
+                                            _message,
+                                            chatRoomId,
+                                            isFirstMsg,
+                                          ),
                                 // textInputAction: TextInputAction.next,
                                 keyboardType: TextInputType.multiline,
                                 autocorrect: false,
@@ -313,7 +355,18 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                               // 3. isLoading을 사용하여 messageProvider가 진행 중인지 확인
                               onPressed: () => isLoading
                                   ? null
-                                  : _onMessageSubmitted(_message, chatRoomId),
+                                  : isFirstMsg
+                                      ? _onFirstMessageSubmitted(
+                                          _message,
+                                          chatRoomId,
+                                          isFirstMsg,
+                                          otherUser,
+                                        )
+                                      : _onMessageSubmitted(
+                                          _message,
+                                          chatRoomId,
+                                          isFirstMsg,
+                                        ),
                               icon: FaIcon(
                                 _isMessage
                                     ? FontAwesomeIcons.solidPaperPlane

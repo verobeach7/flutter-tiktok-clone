@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/inbox/models/chat_room_model.dart';
 import 'package:tiktok_clone/features/inbox/view_models/chat_user_select_view_model.dart';
+import 'package:tiktok_clone/features/inbox/views/chat_detail_screen.dart';
 import 'package:tiktok_clone/features/users/models/user_profile_model.dart';
 
 class ChatUserSelectModal extends ConsumerStatefulWidget {
@@ -21,8 +23,17 @@ class ChatUserSelectModal extends ConsumerStatefulWidget {
 }
 
 class ChatUserSelectState extends ConsumerState<ChatUserSelectModal> {
-  void _onUserTap(String uid) {
-    print("selected: $uid");
+  void _onUserTap(UserProfileModel otherUser) {
+    final user = ref.read(authRepo).user!;
+
+    Navigator.pop(context);
+    context.pushNamed(
+      ChatDetailScreen.routeName,
+      pathParameters: {
+        "chatId": "${user.uid}000${otherUser.uid}",
+      },
+      extra: otherUser,
+    );
   }
 
   @override
@@ -63,7 +74,7 @@ class ChatUserSelectState extends ConsumerState<ChatUserSelectModal> {
                             itemBuilder: (context, index) {
                               final eachUser = usersList[index];
                               return GestureDetector(
-                                onTap: () => _onUserTap(eachUser.uid),
+                                onTap: () => _onUserTap(eachUser),
                                 child: ListTile(
                                   minVerticalPadding: Sizes.size16,
                                   leading: CircleAvatar(

@@ -20,4 +20,14 @@ class ChatRoomModel {
         personB = json["personB"],
         lastStamp = json["lastStamp"],
         lastText = json["lastText"];
+
+  Map<String, dynamic> toJson() {
+    return {
+      "chatRoomId": chatRoomId,
+      "personA": personA,
+      "personB": personB,
+      "lastStamp": lastStamp,
+      "lastText": lastText,
+    };
+  }
 }

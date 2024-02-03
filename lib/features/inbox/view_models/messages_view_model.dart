@@ -1,32 +1,58 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
+import 'package:tiktok_clone/features/inbox/models/chat_room_model.dart';
 import 'package:tiktok_clone/features/inbox/models/message_model.dart';
 import 'package:tiktok_clone/features/inbox/repos/messages_repo.dart';
+import 'package:tiktok_clone/features/users/models/user_profile_model.dart';
 
 class MessagesViewModel extends FamilyAsyncNotifier<void, String> {
   late final MessagesRepo _repo;
+  late final User? _user;
 
   @override
   FutureOr<void> build(String chatRoomId) {
     _repo = ref.read(messagesRepo);
   }
 
-  // 에러 발생을 보여주고 싶다면 sendMessage의 argument로 BuildContext context를 받아서
-  // snackBar로 에러를 보여주면 됨
   Future<void> sendMessage(String text, String chatRoomId) async {
-    final user = ref.read(authRepo).user;
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final message = MessageModel(
         text: text,
-        userId: user!.uid,
+        userId: _user!.uid,
         createdAt: DateTime.now().millisecondsSinceEpoch,
       );
       await _repo.sendMessage(message, chatRoomId);
     });
+  }
+
+  // 에러 발생을 보여주고 싶다면 sendMessage의 argument로 BuildContext context를 받아서
+  // snackBar로 에러를 보여주면 됨
+  Future<void> handleMessage({
+    required String text,
+    required bool isFirstMsg,
+    required String chatRoomId,
+    UserProfileModel? otherUser,
+  }) async {
+    _user = ref.read(authRepo).user;
+    if (!isFirstMsg) {
+      sendMessage(text, chatRoomId);
+    } else {
+      chatRoomId = chatRoomId;
+      final chatRoom = ChatRoomModel(
+        chatRoomId: chatRoomId,
+        personA: _user!.uid,
+        personB: otherUser!.uid,
+        lastStamp: DateTime.now().millisecondsSinceEpoch,
+        lastText: text,
+      );
+      await _repo.createChatRoom(chatRoom);
+      sendMessage(text, chatRoomId);
+    }
   }
 }
 
