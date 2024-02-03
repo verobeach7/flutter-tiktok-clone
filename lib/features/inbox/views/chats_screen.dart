@@ -84,13 +84,13 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
     }
   } */
 
-  void _onChatTap(int index) {
-    // context.push("/chats/$index");
+  void _onChatTap(ChatRoomModel chatRoom, UserProfileModel otherUser) {
     context.pushNamed(
       ChatDetailScreen.routeName,
       pathParameters: {
-        "chatId": "$index",
+        "chatId": chatRoom.chatRoomId,
       },
+      extra: otherUser,
     );
   }
 
@@ -104,7 +104,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
             return ListTile(
               // onLongPress: () => _deleteItem(index),
               onLongPress: () {},
-              onTap: () => _onChatTap(index),
+              onTap: () => _onChatTap(chatRoom, otherUser),
               leading: CircleAvatar(
                 radius: 30,
                 foregroundImage: otherUser.hasAvatar

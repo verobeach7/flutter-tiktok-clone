@@ -5,6 +5,7 @@ import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/inbox/view_models/messages_view_model.dart';
+import 'package:tiktok_clone/features/users/models/user_profile_model.dart';
 import 'package:tiktok_clone/utils.dart';
 
 // view_model에 알려주기 위해 reference에 접근해야 함
@@ -15,10 +16,12 @@ class ChatDetailScreen extends ConsumerStatefulWidget {
   static const String routeURL = ":chatId";
 
   final String chatId;
+  final UserProfileModel otherUser;
 
   const ChatDetailScreen({
     super.key,
     required this.chatId,
+    required this.otherUser,
   });
 
   @override
@@ -48,10 +51,12 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     });
   }
 
-  void _onMessageSubmitted(String text) {
+  void _onMessageSubmitted(String text, String chatRoomId) {
     if (!_isMessage) return;
     // 1. sendMessage는 Future로 await을 사용해야 하지만 이를 사용하지 않고도 가능
-    ref.read(messagesProvider.notifier).sendMessage(text);
+    ref
+        .read(messagesProvider(chatRoomId).notifier)
+        .sendMessage(text, chatRoomId);
     setState(() {
       _message = "";
       _isMessage = false;
@@ -74,7 +79,9 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
   @override
   Widget build(BuildContext context) {
     // 2. ref.watch를 사용하여 loading 중인지 확인
-    final isLoading = ref.watch(messagesProvider).isLoading;
+    final chatRoomId = widget.chatId;
+    final otherUser = widget.otherUser;
+    final isLoading = ref.watch(messagesProvider(chatRoomId)).isLoading;
     final isDark = isDarkMode(context);
     return Scaffold(
       backgroundColor: isDark ? null : Colors.grey.shade50,
@@ -86,11 +93,19 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
           leading: Stack(
             clipBehavior: Clip.none,
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: Sizes.size20 + Sizes.size2,
-                foregroundImage: NetworkImage(
-                    "https://avatars.githubusercontent.com/u/60215757?v=4"),
-                child: Text("희성"),
+                foregroundImage: otherUser.hasAvatar
+                    ? NetworkImage(
+                        "https://firebasestorage.googleapis.com/v0/b/tiktok-verobeach7.appspot.com/o/avatar%2F${otherUser.uid}?alt=media",
+                      )
+                    : null,
+                child: Text(
+                  widget.otherUser.name,
+                  style: const TextStyle(
+                    fontSize: Sizes.size8,
+                  ),
+                ),
               ),
               Positioned(
                 bottom: -1,
@@ -113,7 +128,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
             ],
           ),
           title: Text(
-            "희성 (${widget.chatId})",
+            widget.otherUser.name,
             style: const TextStyle(
               fontWeight: FontWeight.w600,
             ),
@@ -143,7 +158,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
           onTap: _onStopWriting,
           child: Stack(
             children: [
-              ref.watch(chatProvider).when(
+              ref.watch(chatProvider(chatRoomId)).when(
                     data: (data) {
                       return ListView.separated(
                         reverse: true,
@@ -168,6 +183,9 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                               Container(
                                 padding: const EdgeInsets.all(
                                   Sizes.size14,
+                                ),
+                                constraints: const BoxConstraints(
+                                  maxWidth: 300,
                                 ),
                                 decoration: BoxDecoration(
                                   color: isMine
@@ -240,7 +258,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                                 controller: _textEditingController,
                                 onChanged: (value) => _onMessageChanged(value),
                                 onSubmitted: (value) =>
-                                    _onMessageSubmitted(value),
+                                    _onMessageSubmitted(value, chatRoomId),
                                 // textInputAction: TextInputAction.next,
                                 keyboardType: TextInputType.multiline,
                                 autocorrect: false,
@@ -295,7 +313,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                               // 3. isLoading을 사용하여 messageProvider가 진행 중인지 확인
                               onPressed: () => isLoading
                                   ? null
-                                  : _onMessageSubmitted(_message),
+                                  : _onMessageSubmitted(_message, chatRoomId),
                               icon: FaIcon(
                                 _isMessage
                                     ? FontAwesomeIcons.solidPaperPlane

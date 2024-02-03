@@ -9,6 +9,7 @@ import 'package:tiktok_clone/features/inbox/views/activity_screen.dart';
 import 'package:tiktok_clone/features/inbox/views/chat_detail_screen.dart';
 import 'package:tiktok_clone/features/inbox/views/chats_screen.dart';
 import 'package:tiktok_clone/features/onboarding/interests_screen.dart';
+import 'package:tiktok_clone/features/users/models/user_profile_model.dart';
 import 'package:tiktok_clone/features/videos/views/video_recording_screen.dart';
 
 // GoRouter를 Provider 안에 넣기
@@ -67,7 +68,11 @@ final routerProvider = Provider((ref) {
             path: ChatDetailScreen.routeURL,
             builder: (context, state) {
               final chatId = state.pathParameters["chatId"]!;
-              return ChatDetailScreen(chatId: chatId);
+              final args = state.extra as UserProfileModel;
+              return ChatDetailScreen(
+                chatId: chatId,
+                otherUser: args,
+              );
             },
           )
         ],
