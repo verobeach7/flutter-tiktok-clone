@@ -3,10 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
+import 'package:tiktok_clone/features/inbox/models/chat_room_model.dart';
 import 'package:tiktok_clone/features/inbox/view_models/chat_user_select_view_model.dart';
+import 'package:tiktok_clone/features/users/models/user_profile_model.dart';
 
 class ChatUserSelectModal extends ConsumerStatefulWidget {
-  const ChatUserSelectModal({super.key});
+  final List<ChatRoomModel> chatRoomsList;
+
+  const ChatUserSelectModal({
+    super.key,
+    required this.chatRoomsList,
+  });
 
   @override
   ChatUserSelectState createState() => ChatUserSelectState();
@@ -20,9 +28,9 @@ class ChatUserSelectState extends ConsumerState<ChatUserSelectModal> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return ref.watch(chatUsersListProvider).when(
-          data: (userList) {
-            return userList.isNotEmpty
+    return ref.watch(chatUsersListProvider(widget.chatRoomsList)).when(
+          data: (usersList) {
+            return usersList.isNotEmpty
                 ? Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
@@ -51,9 +59,9 @@ class ChatUserSelectState extends ConsumerState<ChatUserSelectModal> {
                           ],
                         ),
                         body: ListView.builder(
-                            itemCount: userList.length,
+                            itemCount: usersList.length,
                             itemBuilder: (context, index) {
-                              final eachUser = userList[index];
+                              final eachUser = usersList[index];
                               return GestureDetector(
                                 onTap: () => _onUserTap(eachUser.uid),
                                 child: ListTile(
@@ -62,7 +70,7 @@ class ChatUserSelectState extends ConsumerState<ChatUserSelectModal> {
                                     radius: Sizes.size32,
                                     foregroundImage: eachUser.hasAvatar
                                         ? NetworkImage(
-                                            "https://firebasestorage.googleapis.com/v0/b/tiktok-verobeach7.appspot.com/o/avatar%2F${userList[index].uid}?alt=media")
+                                            "https://firebasestorage.googleapis.com/v0/b/tiktok-verobeach7.appspot.com/o/avatar%2F${usersList[index].uid}?alt=media")
                                         : null,
                                     child: eachUser.hasAvatar
                                         ? null

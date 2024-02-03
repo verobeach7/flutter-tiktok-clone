@@ -45,10 +45,10 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
     super.dispose();
   }
 
-  void _onUserSelectPressed() {
+  void _onUserSelectPressed(List<ChatRoomModel> chatRoomsList) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => const ChatUserSelectModal(),
+      builder: (context) => ChatUserSelectModal(chatRoomsList: chatRoomsList),
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height,
       ),
@@ -147,29 +147,31 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
             ),
           ),
           loading: () => const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              strokeWidth: 1.0,
+            ),
           ),
         );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0.3,
-        title: const Text("Direct messages"),
-        actions: [
-          IconButton(
-            onPressed: () => _onUserSelectPressed(),
-            icon: const FaIcon(
-              FontAwesomeIcons.plus,
-            ),
-          ),
-        ],
-      ),
-      body: ref.watch(chatRoomsListProvider).when(
-            data: (chatRoomsList) {
-              return Scrollbar(
+    return ref.watch(chatRoomsListProvider).when(
+          data: (chatRoomsList) {
+            return Scaffold(
+              appBar: AppBar(
+                elevation: 0.3,
+                title: const Text("Direct messages"),
+                actions: [
+                  IconButton(
+                    onPressed: () => _onUserSelectPressed(chatRoomsList),
+                    icon: const FaIcon(
+                      FontAwesomeIcons.plus,
+                    ),
+                  ),
+                ],
+              ),
+              body: Scrollbar(
                 controller: _scrollController,
                 child: AnimatedList(
                   key: _key,
@@ -191,15 +193,15 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
                     );
                   },
                 ),
-              );
-            },
-            error: (error, stackTrace) => Center(
-              child: Text(error.toString()),
-            ),
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
-            ),
+              ),
+            );
+          },
+          error: (error, stackTrace) => Center(
+            child: Text(error.toString()),
           ),
-    );
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
   }
 }
