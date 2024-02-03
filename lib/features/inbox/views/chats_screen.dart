@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/inbox/models/chat_room_model.dart';
 import 'package:tiktok_clone/features/inbox/view_models/chat_room_view_model.dart';
+import 'package:tiktok_clone/features/inbox/views/inbox_screen.dart';
 import 'package:tiktok_clone/features/inbox/views/widgets/chat_user_select_modal.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/inbox/views/chat_detail_screen.dart';
@@ -55,7 +56,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
     );
   }
 
-  void _addItem() {
+  /* void _addItem() {
     if (_key.currentState != null) {
       _key.currentState!.insertItem(
         _items.length,
@@ -63,7 +64,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
       );
       _items.add(_items.length);
     }
-  }
+  } */
 
   /* void _deleteItem(int index) {
     if (_key.currentState != null) {
@@ -152,12 +153,24 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
         );
   }
 
+  void _goBackPressed() {
+    context.go("/home");
+  }
+
   @override
   Widget build(BuildContext context) {
     return ref.watch(chatRoomsListProvider).when(
           data: (chatRoomsList) {
             return Scaffold(
               appBar: AppBar(
+                leading: Center(
+                  child: IconButton(
+                    onPressed: _goBackPressed,
+                    icon: const FaIcon(
+                      FontAwesomeIcons.arrowLeft,
+                    ),
+                  ),
+                ),
                 elevation: 0.3,
                 title: const Text("Direct messages"),
                 actions: [

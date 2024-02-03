@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -103,6 +104,31 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     FocusScope.of(context).unfocus();
   }
 
+  void _goBackPressed() {
+    context.pushReplacementNamed(ChatsScreen.routeName);
+
+    /* Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const ChatsScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          var end = const Offset(1.0, 0.0);
+          var begin = Offset.zero;
+          var curve = Curves.ease;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+      ),
+    ); */
+  }
+
   @override
   Widget build(BuildContext context) {
     // 2. ref.watch를 사용하여 loading 중인지 확인
@@ -114,6 +140,14 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     return Scaffold(
       backgroundColor: isDark ? null : Colors.grey.shade50,
       appBar: AppBar(
+        leading: Center(
+          child: IconButton(
+            onPressed: _goBackPressed,
+            icon: const FaIcon(
+              FontAwesomeIcons.arrowLeft,
+            ),
+          ),
+        ),
         backgroundColor: isDark ? null : Colors.grey.shade50,
         title: ListTile(
           contentPadding: EdgeInsets.zero,
