@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -6,10 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
+import 'package:tiktok_clone/features/inbox/models/message_model.dart';
 import 'package:tiktok_clone/features/inbox/view_models/messages_view_model.dart';
 import 'package:tiktok_clone/features/inbox/views/chats_screen.dart';
 import 'package:tiktok_clone/features/users/models/user_profile_model.dart';
 import 'package:tiktok_clone/utils.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 // view_model에 알려주기 위해 reference에 접근해야 함
 // 이를 위해 ConsumerStatefulWidget으로 변경
@@ -37,6 +38,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
 
   String _message = "";
   bool _isMessage = false;
+  Offset tapPosition = Offset.zero;
 
   @override
   void initState() {
@@ -54,6 +56,14 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     });
   }
 
+  void _onInitializeMessage() {
+    setState(() {
+      _message = "";
+      _isMessage = false;
+      _textEditingController.clear();
+    });
+  }
+
   void _onFirstMessageSubmitted(
     String text,
     String chatRoomId,
@@ -62,15 +72,11 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
   ) {
     if (!_isMessage) return;
     ref.read(messagesProvider(chatRoomId).notifier).handleMessage(
-        text: text,
-        isFirstMsg: isFirstMsg,
-        chatRoomId: chatRoomId,
-        otherUser: otherUser);
-    setState(() {
-      _message = "";
-      _isMessage = false;
-      _textEditingController.clear();
-    });
+          text: text,
+          isFirstMsg: isFirstMsg,
+          otherUser: otherUser,
+        );
+    _onInitializeMessage();
   }
 
   void _onMessageSubmitted(
@@ -83,13 +89,12 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     ref.read(messagesProvider(chatRoomId).notifier).handleMessage(
           text: text,
           isFirstMsg: isFirstMsg,
-          chatRoomId: chatRoomId,
         );
-    setState(() {
-      _message = "";
-      _isMessage = false;
-      _textEditingController.clear();
-    });
+    _onInitializeMessage();
+  }
+
+  void _onStopWriting() {
+    FocusScope.of(context).unfocus();
   }
 
   @override
@@ -98,10 +103,6 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     _textEditingController.removeListener(() {});
     _textEditingController.dispose();
     super.dispose();
-  }
-
-  void _onStopWriting() {
-    FocusScope.of(context).unfocus();
   }
 
   void _goBackPressed() {
@@ -129,6 +130,61 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     ); */
   }
 
+  void getTapPosition(TapDownDetails tapDownPosition) {
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    setState(() {
+      tapPosition = renderBox.globalToLocal(tapDownPosition.globalPosition);
+    });
+  }
+
+  void showPopUpMenu(String chatRoomId, MessageModel message) {
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+    showMenu(
+      context: context,
+      position: RelativeRect.fromRect(
+        Rect.fromLTRB(
+          tapPosition.dx,
+          tapPosition.dy,
+          10,
+          10,
+        ),
+        Rect.fromLTRB(
+          100,
+          100,
+          overlay.paintBounds.size.width,
+          overlay.paintBounds.size.height,
+        ),
+      ),
+      items: [
+        PopupMenuItem(
+          child: const Row(
+            children: [
+              FaIcon(FontAwesomeIcons.trashCan),
+              Gaps.h10,
+              Text('Delete'),
+            ],
+          ),
+          onTap: () {
+            ref
+                .read(messagesProvider(chatRoomId).notifier)
+                .deleteMessage(message);
+          },
+        ),
+      ],
+      elevation: 8.0,
+    );
+  }
+
+  void showToast(String msg) {
+    Fluttertoast.showToast(
+      msg: msg,
+      gravity: ToastGravity.TOP,
+      backgroundColor: Colors.black87,
+      toastLength: Toast.LENGTH_LONG,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // 2. ref.watch를 사용하여 loading 중인지 확인
@@ -137,6 +193,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     final isLoading = ref.watch(messagesProvider(chatRoomId)).isLoading;
     final isDark = isDarkMode(context);
     bool isFirstMsg = true;
+
     return Scaffold(
       backgroundColor: isDark ? null : Colors.grey.shade50,
       appBar: AppBar(
@@ -223,7 +280,6 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
               ref.watch(chatProvider(chatRoomId)).when(
                     data: (data) {
                       if (data.isNotEmpty) isFirstMsg = false;
-
                       return ListView.separated(
                         reverse: true,
                         controller: _scrollController,
@@ -243,19 +299,52 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                             mainAxisAlignment: isMine
                                 ? MainAxisAlignment.end
                                 : MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(
-                                  Sizes.size14,
+                              if (isMine) ...[
+                                Text(
+                                  convertEpochToMsgTime(message.createdAt),
+                                  style: const TextStyle(
+                                    color: Colors.black45,
+                                    fontSize: Sizes.size12,
+                                    height: 1,
+                                  ),
+                                  textAlign: TextAlign.right,
                                 ),
-                                constraints: const BoxConstraints(
-                                  maxWidth: 300,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isMine
-                                      ? Colors.blue
-                                      : Theme.of(context).primaryColor,
-                                  borderRadius: BorderRadius.only(
+                                Gaps.h10,
+                              ],
+                              GestureDetector(
+                                onTapDown: (position) =>
+                                    getTapPosition(position),
+                                onLongPress: isMine && !message.isDeleted
+                                    ? () {
+                                        final now = DateTime.now()
+                                            .millisecondsSinceEpoch;
+                                        final timeStamp = message.createdAt;
+                                        final diffMinutes =
+                                            (now - timeStamp) / 1000 / 60;
+                                        if (diffMinutes <= 2) {
+                                          showPopUpMenu(chatRoomId, message);
+                                        } else {
+                                          showToast(
+                                              "Delete only within the last 2 minutes.");
+                                        }
+                                      }
+                                    : () {
+                                        showToast("Delete only my message.");
+                                      },
+                                child: Container(
+                                  padding: const EdgeInsets.all(
+                                    Sizes.size14,
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 270,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isMine
+                                        ? Colors.blue
+                                        : Theme.of(context).primaryColor,
+                                    borderRadius: BorderRadius.only(
                                       topLeft: const Radius.circular(
                                         Sizes.size20,
                                       ),
@@ -265,18 +354,32 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                                       bottomLeft: Radius.circular(
                                         isMine ? Sizes.size20 : Sizes.size5,
                                       ),
-                                      bottomRight: Radius.circular(!isMine
-                                          ? Sizes.size20
-                                          : Sizes.size5)),
-                                ),
-                                child: Text(
-                                  message.text,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: Sizes.size16,
+                                      bottomRight: Radius.circular(
+                                          !isMine ? Sizes.size20 : Sizes.size5),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    message.isDeleted
+                                        ? "[ Deleted ]"
+                                        : message.text,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: Sizes.size16,
+                                    ),
                                   ),
                                 ),
                               ),
+                              if (!isMine) ...[
+                                Gaps.h10,
+                                Text(
+                                  convertEpochToMsgTime(message.createdAt),
+                                  style: const TextStyle(
+                                    color: Colors.black45,
+                                    fontSize: Sizes.size12,
+                                    height: 1,
+                                  ),
+                                ),
+                              ],
                             ],
                           );
                         },

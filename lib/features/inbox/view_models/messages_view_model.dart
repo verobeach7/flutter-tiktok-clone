@@ -11,22 +11,35 @@ import 'package:tiktok_clone/features/users/models/user_profile_model.dart';
 
 class MessagesViewModel extends FamilyAsyncNotifier<void, String> {
   late final MessagesRepo _repo;
-  late final User? _user;
+  late final String chatRoomId;
+  User? _user;
 
   @override
-  FutureOr<void> build(String chatRoomId) {
+  FutureOr<void> build(String arg) {
     _repo = ref.read(messagesRepo);
+    _user = ref.read(authRepo).user;
+    chatRoomId = arg;
   }
 
-  Future<void> sendMessage(String text, String chatRoomId) async {
+  Future<void> sendMessage(String text) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final message = MessageModel(
+        textId: "",
         text: text,
         userId: _user!.uid,
         createdAt: DateTime.now().millisecondsSinceEpoch,
+        isDeleted: false,
       );
       await _repo.sendMessage(message, chatRoomId);
+    });
+  }
+
+  Future<void> deleteMessage(MessageModel message) async {
+    if (_user!.uid != message.userId) return;
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await _repo.deleteMessage(chatRoomId, message.textId);
     });
   }
 
@@ -35,14 +48,13 @@ class MessagesViewModel extends FamilyAsyncNotifier<void, String> {
   Future<void> handleMessage({
     required String text,
     required bool isFirstMsg,
-    required String chatRoomId,
     UserProfileModel? otherUser,
   }) async {
     _user = ref.read(authRepo).user;
     if (!isFirstMsg) {
-      sendMessage(text, chatRoomId);
+      sendMessage(text);
     } else {
-      chatRoomId = chatRoomId;
+      // chatRoomId = chatRoomId;
       final chatRoom = ChatRoomModel(
         chatRoomId: chatRoomId,
         personA: _user!.uid,
@@ -51,7 +63,7 @@ class MessagesViewModel extends FamilyAsyncNotifier<void, String> {
         lastText: text,
       );
       await _repo.createChatRoom(chatRoom);
-      sendMessage(text, chatRoomId);
+      sendMessage(text);
     }
   }
 }
