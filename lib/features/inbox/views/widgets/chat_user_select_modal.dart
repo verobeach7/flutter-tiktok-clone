@@ -39,6 +39,7 @@ class ChatUserSelectState extends ConsumerState<ChatUserSelectModal> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final bool existChatRoom = widget.chatRoomsList.isNotEmpty;
     return ref.watch(chatUsersListProvider(widget.chatRoomsList)).when(
           data: (usersList) {
             return usersList.isNotEmpty
@@ -104,8 +105,50 @@ class ChatUserSelectState extends ConsumerState<ChatUserSelectModal> {
                       ),
                     ),
                   )
-                : const Center(
-                    child: Text("가입된 사용자가 없습니다."),
+                : Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      height: size.height * 0.8,
+                      constraints: const BoxConstraints(
+                        maxWidth: Breakpoints.sm,
+                      ),
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(
+                          Sizes.size14,
+                        ),
+                      ),
+                      child: Scaffold(
+                        appBar: AppBar(
+                          automaticallyImplyLeading: false,
+                          centerTitle: true,
+                          title: const Text(
+                            "대화상대 선택",
+                          ),
+                          actions: [
+                            IconButton(
+                              onPressed: Navigator.of(context).pop,
+                              icon: const FaIcon(FontAwesomeIcons.xmark),
+                            ),
+                          ],
+                        ),
+                        body: Center(
+                          child: existChatRoom
+                              ? const Text(
+                                  "No users available for chat.",
+                                  style: TextStyle(
+                                    fontSize: Sizes.size20,
+                                  ),
+                                )
+                              : const Text(
+                                  "No registered users found.",
+                                  style: TextStyle(
+                                    fontSize: Sizes.size20,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ),
                   );
           },
           error: (error, stackTrace) => Center(

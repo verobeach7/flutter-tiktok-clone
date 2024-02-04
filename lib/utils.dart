@@ -23,15 +23,41 @@ void showFirebaseErrorSnack(
 }
 
 String convertEpochToTime(int timeStamp) {
-  final dateTime = DateTime.fromMillisecondsSinceEpoch(
+  String convertedTime = "";
+  final stampDateTime = DateTime.fromMillisecondsSinceEpoch(
     timeStamp,
   );
-  final amOrPm = dateTime.hour >= 12 ? "PM" : "AM";
-  final hour = (dateTime.hour % 12) == 0 ? 12 : dateTime.hour % 12;
-  final minute =
-      dateTime.minute < 10 ? "0${dateTime.minute}" : "${dateTime.minute}";
 
-  final String convertedTime = "$amOrPm $hour:$minute";
+  final today =
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  final todayYear = today.year;
+  final stampYear = stampDateTime.year;
+  Duration diff = today.difference(stampDateTime);
+  int diffDays = diff.inDays;
+  // int diffHours = diff.inHours;
+  bool isBeforeToday = today.isAfter(stampDateTime);
 
+  if (!isBeforeToday) {
+    final amOrPm = stampDateTime.hour >= 12 ? "PM" : "AM";
+
+    final hour = (stampDateTime.hour % 12) == 0 ? 12 : stampDateTime.hour % 12;
+    final minute = stampDateTime.minute < 10
+        ? "0${stampDateTime.minute}"
+        : "${stampDateTime.minute}";
+
+    convertedTime = "$amOrPm $hour:$minute";
+  } else if (isBeforeToday && diffDays == 0) {
+    convertedTime = "어제";
+  } else if (isBeforeToday && todayYear == stampYear) {
+    // 날짜 보여주기
+    final month = stampDateTime.month;
+    final day = stampDateTime.day;
+
+    convertedTime = "$month월 $day일";
+  } else {
+    final year = stampDateTime.year;
+
+    convertedTime = "$year년";
+  }
   return convertedTime;
 }
