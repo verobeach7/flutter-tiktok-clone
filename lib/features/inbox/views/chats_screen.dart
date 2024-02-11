@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/inbox/models/chat_room_model.dart';
 import 'package:tiktok_clone/features/inbox/view_models/chat_room_view_model.dart';
-import 'package:tiktok_clone/features/inbox/views/inbox_screen.dart';
 import 'package:tiktok_clone/features/inbox/views/widgets/chat_user_select_modal.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/inbox/views/chat_detail_screen.dart';
@@ -28,9 +27,13 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
 
   final ScrollController _scrollController = ScrollController();
 
-  final List<int> _items = [];
+  final List<int> _items = []; // 참고용
+
+  List<ChatRoomModel> _list = [];
 
   final Duration _duration = const Duration(milliseconds: 500);
+
+  bool isFirst = true;
 
   @override
   void initState() {
@@ -56,15 +59,15 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
     );
   }
 
-  /* void _addItem() {
-    if (_key.currentState != null) {
+  void _addItem() {
+    /* if (_key.currentState != null) {
       _key.currentState!.insertItem(
         _items.length,
         duration: _duration,
       );
       _items.add(_items.length);
-    }
-  } */
+    } */
+  }
 
   /* void _deleteItem(int index) {
     if (_key.currentState != null) {
@@ -161,6 +164,17 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
   Widget build(BuildContext context) {
     return ref.watch(chatRoomsListProvider).when(
           data: (chatRoomsList) {
+            print("before: $_list");
+            if (isFirst) {
+              _list = chatRoomsList;
+              print("true: $_list");
+              isFirst = false;
+            } else {
+              print("false(_list): $_list");
+              print("false(chatRoomsList): $chatRoomsList");
+              _addItem();
+            }
+
             return Scaffold(
               appBar: AppBar(
                 leading: Center(
@@ -182,29 +196,31 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
                   ),
                 ],
               ),
-              body: Scrollbar(
-                controller: _scrollController,
-                child: AnimatedList(
-                  key: _key,
-                  initialItemCount: chatRoomsList.length,
-                  controller: _scrollController,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: Sizes.size10,
-                  ),
-                  // itemBuilder는 아이템이 생길 때만 build함
-                  itemBuilder: (context, index, animation) {
-                    // print("Make tile: $index");
-                    return FadeTransition(
-                      key: UniqueKey(),
-                      opacity: animation,
-                      child: SizeTransition(
-                        sizeFactor: animation,
-                        child: _makeTile(index, chatRoomsList[index]),
+              body: chatRoomsList.isNotEmpty
+                  ? Scrollbar(
+                      controller: _scrollController,
+                      child: AnimatedList(
+                        key: _key,
+                        initialItemCount: chatRoomsList.length,
+
+                        controller: _scrollController,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: Sizes.size10,
+                        ),
+                        // itemBuilder는 아이템이 생길 때만 build함
+                        itemBuilder: (context, index, animation) {
+                          return SizeTransition(
+                            sizeFactor: animation,
+                            child: _makeTile(index, chatRoomsList[index]),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
+                    )
+                  : const Center(
+                      child: Text(
+                        "참여중인 대화방이 없습니다.",
+                      ),
+                    ),
             );
           },
           error: (error, stackTrace) => Center(
