@@ -61,23 +61,48 @@ export const onLikedCreated = functions.firestore
     const [videoId, userId] = snapshot.id.split("000");
     const query = db.collection("videos").doc(videoId);
 
+    // Video DB의 likes 필드에 +1
     await query
       // admin 갓 모드를 사용하여 해당하는 필드의 값을 1 올리라고 명령
       .update({ likes: admin.firestore.FieldValue.increment(1) });
 
     const videoSnapshot = await query.get();
-    const thumbnailUrl = videoSnapshot.data()!.thumbnailUrl;
 
-    await db
-      .collection("users")
-      .doc(userId)
-      .collection("likedVideos")
-      .doc(videoId)
-      .set({
-        videoId: videoId,
-        thumbnailUrl: thumbnailUrl,
-        createdAt: Date.now(),
-      });
+    // 좋아요 한 유저의 likedVideos DB에 좋아요 한 동영상 추가
+    if (videoSnapshot) {
+      const thumbnailUrl = videoSnapshot.data()!.thumbnailUrl;
+      await db
+        .collection("users")
+        .doc(userId)
+        .collection("likedVideos")
+        .doc(videoId)
+        .set({
+          videoId: videoId,
+          thumbnailUrl: thumbnailUrl,
+          createdAt: Date.now(),
+        });
+    }
+
+    // 좋아요 한 비디오의 주인에게 알림 보내기
+    if (videoSnapshot) {
+      const creatorUid = videoSnapshot.data()!.creatorUid;
+      const user = await (
+        await db.collection("users").doc(creatorUid).get()
+      ).data();
+      if (user) {
+        const token = user.token;
+        admin.messaging().send({
+          token: token,
+          data: {
+            screen: "123",
+          },
+          notification: {
+            title: "someone liked your video.",
+            body: "Likes + 1 ! Congrats 🚀",
+          },
+        });
+      }
+    }
   });
 
 export const onLikedRemoved = functions.firestore
